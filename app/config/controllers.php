@@ -19,6 +19,8 @@ use App\Controllers\Authorization\AuthorizationController;
 use App\Controllers\Guardian\GuardianControllerInterface;
 use App\Controllers\Guardian\GuardianController;
 
+use App\Repository\Authorization\AuthorizationRepositoryInterface;
+
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
