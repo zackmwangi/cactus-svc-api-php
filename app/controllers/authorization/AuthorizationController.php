@@ -24,15 +24,26 @@ use App\Repository\Authorization\AuthorizationRepository;
 
 class AuthorizationController implements AuthorizationControllerInterface
 {
-    private array $jwtSettings;
-    private AuthorizationRepository$authorizationRepository;
-    private int $maxFlyBySightings;
+    private $jwtSettings;
+    private $authorizationRepository;
+    private $maxFlyBySightings;
+
+    private String $flyByReminder1Days;
+    private String $flyByReminder2Days;
+    private String $flyByInvalidAfterDays;
+
+
     
     public function __construct(array $jwtSettings, AuthorizationRepository $authorizationRepository)
     {
         $this->jwtSettings = $jwtSettings;
         $this->authorizationRepository = $authorizationRepository;
         $this->maxFlyBySightings = 20;//TODO: move this to Settings
+        //
+        $this->flyByReminder1Days = '1';
+        $this->flyByReminder2Days = '3';
+        $this->flyByInvalidAfterDays = '30';
+
     }
     
     
@@ -70,9 +81,7 @@ class AuthorizationController implements AuthorizationControllerInterface
         try{
 
             $payload = $this->validateIdToken($clientIdToken);
-            //var_dump($payload);
-            //die(var_dump($payload));
-
+            
             if($payload) {
                 //
                 //########################################
@@ -187,7 +196,7 @@ class AuthorizationController implements AuthorizationControllerInterface
                     if($registrantIsReturning){
                         // fetch older data
                         $returningRegistrantData = $this->authorizationRepository->getFlybyRegistrantGuardianByEmail($userEmail); 
-                        //die(var_dump($returningRegistrantData));
+                        
                         //
                         $flyByCurrentCount = intval($returningRegistrantData['flyby_count']);
                         //
@@ -211,9 +220,9 @@ class AuthorizationController implements AuthorizationControllerInterface
                         //
                         //Log registrant flyby in case they abort, to ping them later if still not set up maxWait after
                         //$flyByAt = $nowTime4Db;
-                        $flyByReminder1At = date("Y-m-d H:i:s",strtotime("+1 days"));
-                        $flyByReminder2At = date("Y-m-d H:i:s",strtotime("+3 days"));
-                        $flyByValidUntil = date("Y-m-d H:i:s",strtotime("+7 days"));
+                        $flyByReminder1At = date("Y-m-d H:i:s",strtotime("+".$this->flyByReminder1Days." days"));
+                        $flyByReminder2At = date("Y-m-d H:i:s",strtotime("+".$this->flyByReminder2Days." days"));
+                        $flyByValidUntil = date("Y-m-d H:i:s",strtotime("+".$this->flyByInvalidAfterDays." days"));
 
                         $flyByData = [
                             'name' => $fullname,
@@ -280,14 +289,13 @@ class AuthorizationController implements AuthorizationControllerInterface
                 return $response;
                 //
             }else{
-                //die(var_dump($payload));
                 return $response->withStatus(401);
             }
             
             //################################################################
 
         }catch (Exception $e) {
-            //die(var_dump($e->getMessage()));;
+            
             return $response->withStatus(401);
         }
 
