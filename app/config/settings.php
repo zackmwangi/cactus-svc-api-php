@@ -1,18 +1,24 @@
 <?php
 declare(strict_types=1);
 
+//include(__DIR__ . '/../settings/SettingsInterface.php');
+//include(__DIR__ . '/../settings/Settings.php');
+
+namespace App\Config;
+
 use App\Settings\SettingsInterface;
 use App\Settings\Settings;
 
 use DI\ContainerBuilder;
 use Firebase\JWT\JWT;
 use Monolog\Logger;
-//use Dotenv\Dotenv;
+use Dotenv\Dotenv;
+use PDO;
 
 
 return function (ContainerBuilder $containerBuilder) {
 
-    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv = Dotenv::createImmutable(__DIR__);
     $dotenv->load();
 
     // Global Settings Object

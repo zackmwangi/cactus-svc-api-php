@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 
+//include(__DIR__ . '/../settings/SettingsInterface.php');
+
+namespace App\Config;
+
 use App\Settings\SettingsInterface;
 use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;

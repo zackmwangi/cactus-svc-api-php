@@ -1,6 +1,12 @@
 <?php
 declare(strict_types=1);
 
+//include(__DIR__ . '/../middleware/authorization/AuthorizationMiddleware.php');
+//include(__DIR__ . '/../middleware/authorization/AuthorizationMiddlewareInterface.php');
+//include(__DIR__ . '/../settings/SettingsInterface.php');
+
+namespace App\Config;
+
 use App\Settings\SettingsInterface;
 use Psr\Container\ContainerInterface;
 use DI\ContainerBuilder;

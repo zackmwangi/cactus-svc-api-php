@@ -1,11 +1,15 @@
 <?php
 declare(strict_types=1);
 
+//include(__DIR__ . '/../settings/SettingsInterface.php');
+//include(__DIR__ . '/../repository/authorization/AuthorizationRepositoryInterface.php');
+
+namespace App\Config;
+
 use App\Settings\SettingsInterface;
 use App\Repository\Authorization\AuthorizationRepository;
-//use App\Repository\Authorization\AuthorizationRepositoryInterface;
 
-//use PDO;
+use PDO;
 
 use Psr\Container\ContainerInterface;
 use DI\ContainerBuilder;

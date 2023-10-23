@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -17,11 +17,12 @@ $containerBuilder = new ContainerBuilder();
 
 // Should be set to true in production
 //if (false) { 
-	$containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
+	//$containerBuilder->enableCompilation(__DIR__ . '/../var/cache');
 //}
 
 //#############################
 // Set up settings
+//$settingsClass = require __DIR__ . '/../app/settings/Settings.php';
 $settings = require __DIR__ . '/../app/config/settings.php';
 $settings($containerBuilder);
 
