@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-//include(__DIR__ . '/../settings/SettingsInterface.php');
-//include(__DIR__ . '/../repository/authorization/AuthorizationRepositoryInterface.php');
-
 namespace App\Config;
+
+include(__DIR__ . '/../settings/SettingsInterface.php');
+include(__DIR__ . '/../repository/authorization/AuthorizationRepositoryInterface.php');
 
 use App\Settings\SettingsInterface;
 use App\Repository\Authorization\AuthorizationRepository;

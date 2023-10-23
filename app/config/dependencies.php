@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-//include(__DIR__ . '/../settings/SettingsInterface.php');
-
 namespace App\Config;
+
+include(__DIR__ . '/../settings/SettingsInterface.php');
 
 use App\Settings\SettingsInterface;
 use DI\ContainerBuilder;

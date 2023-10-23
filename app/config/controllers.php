@@ -1,13 +1,15 @@
 <?php
 declare(strict_types=1);
 
-//include(__DIR__ . '/../controllers/authorization/AuthorizationController.php');
-//include(__DIR__ . '/../controllers/authorization/AuthorizationControllerInterface.php');
-//
-//include(__DIR__ . '/../controllers/guardian/GuardianController.php');
-//include(__DIR__ . '/../controllers/guardian/GuardianControllerInterface.php');
-
 namespace App\Config;
+
+include(__DIR__ . '/../controllers/authorization/AuthorizationController.php');
+include(__DIR__ . '/../controllers/authorization/AuthorizationControllerInterface.php');
+//
+include(__DIR__ . '/../controllers/guardian/GuardianController.php');
+include(__DIR__ . '/../controllers/guardian/GuardianControllerInterface.php');
+
+
 
 use App\Settings\SettingsInterface;
 use Psr\Container\ContainerInterface;
