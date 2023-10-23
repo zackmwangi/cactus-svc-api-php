@@ -19,7 +19,14 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "App\\Settings\\": "app/settings/",
+            "App\\Controllers\\Authorization\\": "app/controllers/authorization/",
+            "App\\Controllers\\Guardian\\": "app/controllers/guardian/",
+            "App\\Middleware\\Authorization\\": "app/middleware/authorization/",
+            "App\\Repository\\Authorization\\": "app/repository/authorization/",
+            "App\\Repository\\Guardian\\": "app/repository/guardian/"
+            
         }
     }
     

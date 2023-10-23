@@ -8,5 +8,5 @@ use PDO;
 interface AuthorizationRepositoryInterface
 {
 
-    public function __construct(PDO $dbConnection);
+    public function __construct(PDO $dbConnection, bool $useRegistrationWhitelist);
 }

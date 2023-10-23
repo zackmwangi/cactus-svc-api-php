@@ -3,10 +3,6 @@ declare(strict_types=1);
 
 namespace App\Controllers\Authorization;
 
-require __DIR__ . '/../../../vendor/autoload.php';
-
-
-
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -23,6 +19,7 @@ use UnexpectedValueException;
 use Exception;
 use Google\Service\BigtableAdmin\Split;
 
+use App\Controllers\Authorization\AuthorizationControllerInterface;
 use App\Repository\Authorization\AuthorizationRepository;
 
 class AuthorizationController implements AuthorizationControllerInterface

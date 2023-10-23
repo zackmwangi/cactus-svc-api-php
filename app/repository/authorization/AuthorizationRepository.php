@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 namespace App\Repository\Authorization;
 
+use App\Repository\Authorization\AuthorizationRepositoryInterface;
+
 use PDO;
 use PDO\Exception;
 
 class AuthorizationRepository implements  AuthorizationRepositoryInterface
 {
-    private PDO $dbConnection;
-    private bool $useRegistrationWhitelist;
+    private $dbConnection;
+    private $useRegistrationWhitelist;
 
     public function __construct(PDO $dbConnection, bool $useRegistrationWhitelist=false){
         $this->dbConnection = $dbConnection;

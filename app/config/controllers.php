@@ -3,23 +3,22 @@ declare(strict_types=1);
 
 namespace App\Config;
 
-include(__DIR__ . '/../controllers/authorization/AuthorizationController.php');
-include(__DIR__ . '/../controllers/authorization/AuthorizationControllerInterface.php');
+//include(__DIR__ . '/../controllers/authorization/AuthorizationController.php');
+//include(__DIR__ . '/../controllers/authorization/AuthorizationControllerInterface.php');
 //
-include(__DIR__ . '/../controllers/guardian/GuardianController.php');
-include(__DIR__ . '/../controllers/guardian/GuardianControllerInterface.php');
-
-
+//include(__DIR__ . '/../controllers/guardian/GuardianController.php');
+//include(__DIR__ . '/../controllers/guardian/GuardianControllerInterface.php');
 
 use App\Settings\SettingsInterface;
 use Psr\Container\ContainerInterface;
 use DI\ContainerBuilder;
 
-use App\Controllers\Authorization\AuthorizationController;
 use App\Controllers\Authorization\AuthorizationControllerInterface;
+use App\Controllers\Authorization\AuthorizationController;
 
-use App\Controllers\Guardian\GuardianController;
 use App\Controllers\Guardian\GuardianControllerInterface;
+use App\Controllers\Guardian\GuardianController;
+
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([

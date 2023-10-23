@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\Config;
 
-include(__DIR__ . '/../settings/SettingsInterface.php');
+//include(__DIR__ . '/../settings/SettingsInterface.php');
 
 use App\Settings\SettingsInterface;
 use DI\ContainerBuilder;

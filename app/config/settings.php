@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace App\Config;
 
-include(__DIR__ . '/../settings/SettingsInterface.php');
-include(__DIR__ . '/../settings/Settings.php');
+//include(__DIR__ . '/../settings/SettingsInterface.php');
+//include(__DIR__ . '/../settings/Settings.php');
 
 use App\Settings\SettingsInterface;
 use App\Settings\Settings;
@@ -15,7 +15,6 @@ use Monolog\Logger;
 use Dotenv\Dotenv;
 use PDO;
 
-
 return function (ContainerBuilder $containerBuilder) {
 
     $dotenv = Dotenv::createImmutable(__DIR__);
@@ -23,7 +22,7 @@ return function (ContainerBuilder $containerBuilder) {
 
     // Global Settings Object
     $containerBuilder->addDefinitions([
-        SettingsInterface::class => function () {
+        SettingsInterface::class => function (){
             return new Settings([
                 'displayErrorDetails' => true, // Should be set to false in production
                 'logError'            => true,

@@ -11,6 +11,8 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 //Slim\Exception\NotFoundException;use Psr\Http\Message\ResponseInterface as Response;
 //use Slim\Exception\HttpForbiddenException;
 
+use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
+
 class AuthorizationMiddleware implements AuthorizationMiddlewareInterface
 {
     private $jwtSettings;

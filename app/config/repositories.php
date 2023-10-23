@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace App\Config;
 
-include(__DIR__ . '/../settings/SettingsInterface.php');
-include(__DIR__ . '/../repository/authorization/AuthorizationRepositoryInterface.php');
+//include(__DIR__ . '/../settings/SettingsInterface.php');
+//include(__DIR__ . '/../repository/authorization/AuthorizationRepositoryInterface.php');
 
 use App\Settings\SettingsInterface;
+//
+use App\Repository\Authorization\AuthorizationRepositoryInterface;
 use App\Repository\Authorization\AuthorizationRepository;
 
 use PDO;

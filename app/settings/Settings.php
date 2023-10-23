@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace App\Settings;
 
+use App\Settings\SettingsInterface;
+
 class Settings implements SettingsInterface
 {
-    private array $settings;
+    private $settings;
 
     public function __construct(array $settings)
     {

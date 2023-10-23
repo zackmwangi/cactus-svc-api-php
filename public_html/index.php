@@ -3,9 +3,26 @@ declare(strict_types=1);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
+//
 require __DIR__ . '/../vendor/autoload.php';
-
+//
+include(__DIR__ . '/../app/settings/SettingsInterface.php');
+include(__DIR__ . '/../app/settings/Settings.php');
+//
+include(__DIR__ . '/../app/repository/authorization/AuthorizationRepositoryInterface.php');
+include(__DIR__ . '/../app/repository/authorization/AuthorizationRepository.php');
+//
+include(__DIR__ . '/../app/middleware/authorization/AuthorizationMiddlewareInterface.php');
+include(__DIR__ . '/../app/middleware/authorization/AuthorizationMiddleware.php');
+//
+include(__DIR__ . '/../app/controllers/authorization/AuthorizationControllerInterface.php');
+include(__DIR__ . '/../app/controllers/authorization/AuthorizationController.php');
+//
+include(__DIR__ . '/../app/controllers/guardian/GuardianControllerInterface.php');
+include(__DIR__ . '/../app/controllers/guardian/GuardianController.php');
+//
+//
+use App\Settings\Settings;
 use App\Settings\SettingsInterface;
 
 use DI\ContainerBuilder;
@@ -72,7 +89,7 @@ $errorHandler = $errorMiddleware->getDefaultErrorHandler();
 $errorHandler->forceContentType('application/json');
 
 // Register Routes
-require __DIR__ . '/../app/routes/api.php'; 
+//require __DIR__ . '/../app/routes/api.php'; 
 $routes = require __DIR__ . '/../app/routes/api.php';
 $routes($app, $container);
 
