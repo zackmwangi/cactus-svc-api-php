@@ -16,9 +16,15 @@ use DI\ContainerBuilder;
 use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
 use App\Middleware\Authorization\AuthorizationMiddleware;
 
+use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
+        IpGeolocationMiddleware::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+            $ipInfoAccessToken = $settings->get('IpInfoAccessToken');
+            return new IpGeolocationMiddleware($ipInfoAccessToken);
+        },
         AuthorizationMiddlewareInterface::class => function (ContainerInterface $c) {
             $settings = $c->get(SettingsInterface::class);
             $jwtSettings = $settings->get('jwtSettings');

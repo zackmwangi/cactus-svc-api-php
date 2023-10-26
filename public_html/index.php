@@ -89,6 +89,7 @@ $errorHandler = $errorMiddleware->getDefaultErrorHandler();
 $errorHandler->forceContentType('application/json');
 
 // Register Routes
+//$app->add($app->getContainer()->get(IpGeolocationMiddlewareInterface::class));
 //require __DIR__ . '/../app/routes/api.php'; 
 $routes = require __DIR__ . '/../app/routes/api.php';
 $routes($app, $container);

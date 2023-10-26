@@ -42,7 +42,6 @@ return function (ContainerBuilder $containerBuilder) {
                     'jwtIss' => $_ENV['JWT_ISS'],
                     'jwtFirebaseProjectId'=>$_ENV['JWT_FIREBASE_PROJ_ID'],
                 ],
-                
                 //DB
                 'dbSettings' => [
                     /*
@@ -55,10 +54,8 @@ return function (ContainerBuilder $containerBuilder) {
                     */
                     'dbConnection' => new PDO("mysql:host=".$_ENV['DB_HOST'].";dbname=".$_ENV['DB_NAME'], $_ENV['DB_USER'], $_ENV['DB_PASS']),
                 ],
-
-                
-
-
+                //GeoLocation
+                'IpInfoAccessToken' => $_ENV['IP_INFO_ACCESS_TOKEN'],
             ]);
         },
 

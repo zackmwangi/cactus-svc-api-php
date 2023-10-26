@@ -26,23 +26,25 @@ class AuthorizationController implements AuthorizationControllerInterface
 {
     private $jwtSettings;
     private $authorizationRepository;
-    private $maxFlyBySightings;
+    private $flyByMaxSightings;
 
     private String $flyByReminder1Days;
     private String $flyByReminder2Days;
     private String $flyByInvalidAfterDays;
 
+    private $geoLocationInfo;
 
     
     public function __construct(array $jwtSettings, AuthorizationRepository $authorizationRepository)
     {
         $this->jwtSettings = $jwtSettings;
         $this->authorizationRepository = $authorizationRepository;
-        $this->maxFlyBySightings = 20;//TODO: move this to Settings
+        $this->flyByMaxSightings = 30;//TODO: move this to Settings
         //
         $this->flyByReminder1Days = '1';
         $this->flyByReminder2Days = '3';
         $this->flyByInvalidAfterDays = '30';
+        $this->geoLocationInfo = null;
 
     }
     
@@ -66,6 +68,15 @@ class AuthorizationController implements AuthorizationControllerInterface
         $clientIdTokenArray = $request->getHeader('X-CLIENT-ID-TOKEN');
         $clientIdToken = trim($clientIdTokenArray[0]);
 
+        //GeoLocation info
+        
+        $geolocation = $request->getAttribute('geolocation');
+        if($geolocation!==''){
+            $this->geoLocationInfo = $geolocation;
+        }
+        //die(var_dump($geolocation));
+        //$geoLocationInfo;
+
         //return by authprovider
         switch($authProvider){
             case 'google':
@@ -83,8 +94,36 @@ class AuthorizationController implements AuthorizationControllerInterface
             $payload = $this->validateIdToken($clientIdToken);
             
             if($payload) {
+                //####################################################################
                 //
-                //########################################
+                //geoInfoDefaults
+                $geoInfoIpAddress = $_SERVER['REMOTE_ADDR'];
+                $geoInfoCountryCode = '';
+                $geoInfoCountryName = '';
+                $geoInfoCity = '';
+                $geoInfoLoc = '';
+                $geoInfoLat = '';
+                $geoInfoLng = '';
+
+                //if($this->geoLocationInfo !== null && ($geoInfoIpAddress !== "127.0.0.1")) {
+                if($this->geoLocationInfo !== null){
+
+                    $geoInfoIpAddress = $this->geoLocationInfo->ip;
+                    $geoInfoCountryCode = $this->geoLocationInfo->country;
+                    $geoInfoCountryName = $this->geoLocationInfo->country_name;
+                    $geoInfoCity = $this->geoLocationInfo->city;
+                    $geoInfoLoc = $this->geoLocationInfo->loc;
+                    $geoInfoLat = $this->geoLocationInfo->latitude;
+                    $geoInfoLng = $this->geoLocationInfo->longitude;
+                }
+
+                //
+                //var_dump($geoInfoIpAddress);
+                //var_dump($this->geoLocationInfo);
+                //die();
+                //
+                //
+                //####################################################################
                 // Valid Google user
                 // Generate our own JWT token and issue it
                 //
@@ -200,7 +239,7 @@ class AuthorizationController implements AuthorizationControllerInterface
                         //
                         $flyByCurrentCount = intval($returningRegistrantData['flyby_count']);
                         //
-                        if($flyByCurrentCount>=$this->maxFlyBySightings){
+                        if($flyByCurrentCount>=$this->flyByMaxSightings){
                             return $response->withStatus(403);
                         }
                         //
@@ -231,7 +270,18 @@ class AuthorizationController implements AuthorizationControllerInterface
                             'reminder_1_schedule_for'=> $flyByReminder1At,
                             'reminder_2_schedule_for'=> $flyByReminder2At,
                             'valid_until'=> $flyByValidUntil,
+                            //###############################
+                            'geoinfo_ip_address' => $geoInfoIpAddress,
+                            'geoinfo_country_code' => $geoInfoCountryCode,
+                            'geoinfo_country_name' => $geoInfoCountryName,
+                            'geoinfo_city' => $geoInfoCity,
+                            'geoinfo_loc' => $geoInfoLoc,
+                            'geoinfo_lat' => $geoInfoLat,
+                            'geoinfo_lng' => $geoInfoLng,
+                            //###############################
                         ];
+
+                        //die(var_dump($flyByData));
                         //
                         //
 
@@ -277,10 +327,19 @@ class AuthorizationController implements AuthorizationControllerInterface
                     'username' => $username,
                     'accountCreatedAt' => $accCreatedAt,
                     'accountLastLogin' => $accLastLogin,
-                    'userType'=>$userType,
-                    'loginProvider'=>$clientIdTokenLoginProvider,
-                    'loginProviderSub'=>$clientIdTokenSub,
-                    'recentLogins'=>$recentLogins,
+                    'userType' => $userType,
+                    'loginProvider' => $clientIdTokenLoginProvider,
+                    'loginProviderSub' => $clientIdTokenSub,
+                    'recentLogins' => $recentLogins,
+                    //############
+                    'geoInfoIpAddress' => $geoInfoIpAddress,
+                    'geoInfoCountryCode' => $geoInfoCountryCode,
+                    'geoInfoCountryName' => $geoInfoCountryName,
+                    'geoInfoCity' => $geoInfoCity,
+                    'geoInfoLoc' => $geoInfoLoc,
+                    'geoInfoLat' => $geoInfoLat,
+                    'geoInfoLng' => $geoInfoLng,
+                    //############
                 ];
                 //
                 $payload = json_encode($userData);
@@ -289,13 +348,15 @@ class AuthorizationController implements AuthorizationControllerInterface
                 return $response;
                 //
             }else{
+                die("N/A");
                 return $response->withStatus(401);
             }
             
             //################################################################
 
         }catch (Exception $e) {
-            
+
+            die(var_dump($e->getMessage()));
             return $response->withStatus(401);
         }
 

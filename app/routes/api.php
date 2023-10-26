@@ -5,6 +5,8 @@ use App\Controllers\Authorization\AuthorizationControllerInterface;
 use App\Controllers\Guardian\GuardianControllerInterface;
 use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
 //use App\Settings\SettingsInterface;
+use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
+//
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
@@ -17,11 +19,7 @@ use DI\Container;
 //return function (App $app, ContainerBuilder $containerBuilder) {
 return function (App $app, Container $dependencyContainer) {
 
-    //var_dump($dependencyContainer);
-    //var_dump($dependencyContainer[AuthorizationController::class]);
-    
-
-    
+    $app->add($app->getContainer()->get(IpGeolocationMiddleware::class));
 
     $app->group('/api/v1', function (RouteCollectorProxy $routeGroup) {
 

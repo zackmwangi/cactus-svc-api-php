@@ -79,8 +79,8 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
 
         //try{
         //
-        $sql = "INSERT INTO registrant_flyby (name, email, flyby_at, reminder_1_schedule_for, reminder_2_schedule_for, valid_until) VALUES (
-            :name, :email, :flyby_at, :reminder_1_schedule_for, :reminder_2_schedule_for, :valid_until)";
+        $sql = "INSERT INTO registrant_flyby (name, email, flyby_at, reminder_1_schedule_for, reminder_2_schedule_for, valid_until, geoinfo_ip_address, geoinfo_country_code, geoinfo_country_name, geoinfo_city, geoinfo_loc, geoinfo_lat, geoinfo_lng) VALUES (
+            :name, :email, :flyby_at, :reminder_1_schedule_for, :reminder_2_schedule_for, :valid_until, :geoinfo_ip_address, :geoinfo_country_code, :geoinfo_country_name, :geoinfo_city, :geoinfo_loc, :geoinfo_lat, :geoinfo_lng )";
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bindValue(":name",$flybyData['name']);
         $stmt->bindValue(":email",$flybyData['email']);
@@ -88,6 +88,15 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $stmt->bindValue(":reminder_1_schedule_for",$flybyData['reminder_1_schedule_for']);
         $stmt->bindValue(":reminder_2_schedule_for",$flybyData['reminder_2_schedule_for']);
         $stmt->bindValue(":valid_until",$flybyData['valid_until']);
+        //
+        $stmt->bindValue(":geoinfo_ip_address",$flybyData['geoinfo_ip_address']);
+        $stmt->bindValue(":geoinfo_country_code",$flybyData['geoinfo_country_code']);
+        $stmt->bindValue(":geoinfo_country_name",$flybyData['geoinfo_country_name']);
+        $stmt->bindValue(":geoinfo_city",$flybyData['geoinfo_city']);
+        $stmt->bindValue(":geoinfo_loc",$flybyData['geoinfo_loc']);
+        $stmt->bindValue(":geoinfo_lat",$flybyData['geoinfo_lat']);
+        $stmt->bindValue(":geoinfo_lng",$flybyData['geoinfo_lng']);
+        //
         $stmt->execute();
         $count = $stmt->rowCount();
         

@@ -15,7 +15,8 @@
         "kreait/firebase-tokens": "^4.2",
         "symfony/cache": "^6.3",
         "cloudevents/sdk-php": "^1.0",
-        "vlucas/phpdotenv": "^5.5"
+        "vlucas/phpdotenv": "^5.5",
+        "ipinfo/ipinfo": "^3.1"
     },
     "autoload": {
         "psr-4": {
