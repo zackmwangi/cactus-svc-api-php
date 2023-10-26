@@ -12,6 +12,9 @@ include(__DIR__ . '/../app/settings/Settings.php');
 include(__DIR__ . '/../app/repository/authorization/AuthorizationRepositoryInterface.php');
 include(__DIR__ . '/../app/repository/authorization/AuthorizationRepository.php');
 //
+include(__DIR__ . '/../app/middleware/ipgeolocation/IpGeolocationMiddlewareInterface.php');
+include(__DIR__ . '/../app/middleware/ipgeolocation/IpGeolocationMiddleware.php');
+
 include(__DIR__ . '/../app/middleware/authorization/AuthorizationMiddlewareInterface.php');
 include(__DIR__ . '/../app/middleware/authorization/AuthorizationMiddleware.php');
 //
