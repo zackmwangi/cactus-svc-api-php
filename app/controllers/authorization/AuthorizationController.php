@@ -340,6 +340,7 @@ class AuthorizationController implements AuthorizationControllerInterface
                     'geoInfoLat' => $geoInfoLat,
                     'geoInfoLng' => $geoInfoLng,
                     //############
+                    'inferredGender' => $this->getInferredGender($firstname, $lastname, $geoInfoCountryCode ),//$inferredGender,
                 ];
                 //
                 $payload = json_encode($userData);
@@ -406,6 +407,53 @@ class AuthorizationController implements AuthorizationControllerInterface
        
         //##########
         return JWT::encode($payload, $this->jwtSettings['secret_key'], $this->jwtSettings['algorithm']);
+    }
+
+    private function getInferredGender(String $firstname, String $lastname, String $countryCode){
+
+        $firstname = trim($firstname);
+        $lastname = trim($lastname);
+        $countryCode = trim($countryCode);
+        //
+        $gender = '';
+
+        if($firstname != ''){
+            $firstname = ucfirst($firstname);
+            switch($firstname){
+                    case 'male':
+                    case 'Zachary':
+                    case 'Zack':
+                    case 'Zack':
+                    case 'Francis':
+                    case 'James':
+                    case 'David':
+                    case 'Henry':
+                    //
+                        $gender = 'M';
+
+                break;
+
+                    case 'female':
+                    case 'Winfred':
+                    case 'Winifred':
+                    case 'Mercy':
+                    case 'Nelly':
+                    case 'Nelius':
+                    //
+                        $gender = 'F';
+                break;
+
+                default:
+                $gender = '';
+                break;
+            }
+        }
+        //Zachary Mwangi KE = M
+        //Winfred Njeri KE = F
+        //Mercy Wahome KE = F
+
+        return $gender;
+
     }
 
 }
