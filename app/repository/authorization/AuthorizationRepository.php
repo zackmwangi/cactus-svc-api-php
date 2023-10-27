@@ -6,7 +6,8 @@ namespace App\Repository\Authorization;
 use App\Repository\Authorization\AuthorizationRepositoryInterface;
 
 use PDO;
-use PDO\Exception;
+use PDO\Exception as PDOEx;
+//use Exception;
 
 class AuthorizationRepository implements  AuthorizationRepositoryInterface
 {
@@ -101,8 +102,8 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $count = $stmt->rowCount();
         
         return $count >0;
-        //}catch (PDOException $e) {  
-
+        //}catch (PDOEx $e) {  
+            //die(var_dump($e));
             //return false;
         //}
     }

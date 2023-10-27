@@ -409,11 +409,11 @@ class AuthorizationController implements AuthorizationControllerInterface
         return JWT::encode($payload, $this->jwtSettings['secret_key'], $this->jwtSettings['algorithm']);
     }
 
-    private function getInferredGender(String $firstname, String $lastname, String $countryCode){
+    private function getInferredGender(String $firstname, String $lastname, $countryCode){
 
         $firstname = trim($firstname);
         $lastname = trim($lastname);
-        $countryCode = trim($countryCode);
+        //$countryCode = trim($countryCode);
         //
         $gender = '';
 
