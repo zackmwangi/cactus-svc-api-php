@@ -31,8 +31,7 @@ class IpGeolocationMiddleware implements IpGeolocationMiddlewareInterface
         try{
             $geolocationData = $client->getDetails($ip);
             $request = $request->withAttribute('geolocation', $geolocationData);
-
-        //}catch(Exception $e){
+        
         }catch(IPinfoException $e){
             //IPinfoException
             //Log exception
@@ -42,18 +41,4 @@ class IpGeolocationMiddleware implements IpGeolocationMiddlewareInterface
         $response = $handler->handle($request);
         return $response;
     }
-
-    /*
-    public function getCountryforIpAddress(string $ipAddress){
-        $client = new IPinfo($this->IpInfoAccessToken);
-        $details = $client->getDetails($ipAddress);
-
-        //IpAddress
-        //IpCountry
-        //IpCity
-        //IpLoc
-        //IpLat
-        //IpLng
-    }
-    */
 }

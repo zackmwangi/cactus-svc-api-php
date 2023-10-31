@@ -1,5 +1,8 @@
 <?php
 declare(strict_types=1);
+//
+date_default_timezone_set('UTC');
+//
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -11,6 +14,9 @@ include(__DIR__ . '/../app/settings/Settings.php');
 //
 include(__DIR__ . '/../app/repository/authorization/AuthorizationRepositoryInterface.php');
 include(__DIR__ . '/../app/repository/authorization/AuthorizationRepository.php');
+//
+include(__DIR__ . '/../app/middleware/customheader/CustomHeaderMiddlewareInterface.php');
+include(__DIR__ . '/../app/middleware/customheader/CustomHeaderMiddleware.php');
 //
 include(__DIR__ . '/../app/middleware/ipgeolocation/IpGeolocationMiddlewareInterface.php');
 include(__DIR__ . '/../app/middleware/ipgeolocation/IpGeolocationMiddleware.php');

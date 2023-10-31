@@ -17,6 +17,7 @@ use UnexpectedValueException;
 //use Google\Service\Books\Resource\Onboarding;
 //
 use Exception;
+use \stdClass;
 use Google\Service\BigtableAdmin\Split;
 
 use App\Controllers\Authorization\AuthorizationControllerInterface;
@@ -33,24 +34,45 @@ class AuthorizationController implements AuthorizationControllerInterface
     private String $flyByInvalidAfterDays;
 
     private $geoLocationInfo;
+    private $validatedUserpayload;
+    private $defaultLocationCountryCode;
+    private $defaultLocationLoc;
+
+    private $bithdayStartDate;
+    private $bithdayStopDate;
+
+    private $defaultGender;
+    private $defaultAccountType;
 
     
     public function __construct(array $jwtSettings, AuthorizationRepository $authorizationRepository)
     {
         $this->jwtSettings = $jwtSettings;
         $this->authorizationRepository = $authorizationRepository;
-        $this->flyByMaxSightings = 30;//TODO: move this to Settings
+        //
+        //Registrant Defaults
+        $this->flyByMaxSightings = 50;//TODO: move this to Settings
         //
         $this->flyByReminder1Days = '1';
         $this->flyByReminder2Days = '3';
         $this->flyByInvalidAfterDays = '30';
+        //
         $this->geoLocationInfo = null;
-
+        $this->validatedUserpayload = null;
+        $this->geoLocationInfo = new stdClass();
+        //
+        $this->defaultLocationCountryCode = '';
+        $this->defaultLocationLoc = '';
+        //
+        $this->bithdayStartDate = '';
+        $this->bithdayStopDate = '';
+        //
+        $this->defaultGender = 'F';
+        $this->defaultAccountType = 'GUARDIAN';
     }
     
     
     public function authorizeIdtoken(Request $request, Response $response, array $args){
-
 
         if (!($request->hasHeader('X-CLIENT-ID-TOKEN')&&$request->hasHeader('X-CLIENT-TYPE'))) {
             //BAD REQUEST
@@ -69,14 +91,29 @@ class AuthorizationController implements AuthorizationControllerInterface
         $clientIdToken = trim($clientIdTokenArray[0]);
 
         //GeoLocation info
-        
+        //geoInfoDefaults
+        $geoInfoIpAddress = $_SERVER['REMOTE_ADDR'];
+        $geoInfoCountryCode = '';
+        $geoInfoCountryName = '';
+        $geoInfoCity = '';
+        $geoInfoLoc = '';
+        $geoInfoLat = '';
+        $geoInfoLng = '';
+        //
+        //$this->geoLocationInfo = new stdClass();
+        $this->geoLocationInfo->ip = $geoInfoIpAddress;
+        $this->geoLocationInfo->country = $geoInfoCountryCode;
+        $this->geoLocationInfo->country_name = $geoInfoCountryName;
+        $this->geoLocationInfo->city = $geoInfoCity;
+        $this->geoLocationInfo->loc = $geoInfoLoc;
+        $this->geoLocationInfo->latitude = $geoInfoLat;
+        $this->geoLocationInfo->longitude = $geoInfoLng;
+        //
         $geolocation = $request->getAttribute('geolocation');
         if($geolocation!==''){
             $this->geoLocationInfo = $geolocation;
         }
-        //die(var_dump($geolocation));
-        //$geoLocationInfo;
-
+        //
         //return by authprovider
         switch($authProvider){
             case 'google':
@@ -84,60 +121,42 @@ class AuthorizationController implements AuthorizationControllerInterface
             return $this->authorizeIdtokenGoogle($clientIdToken, $response);
             break;
         }
-
     }
 
     private function authorizeIdtokenGoogle(String $clientIdToken, Response $response){
         
         try{
 
-            $payload = $this->validateIdToken($clientIdToken);
+            $validatedUserpayload = $this->validateIdToken($clientIdToken);
             
-            if($payload) {
-                //####################################################################
+            if($validatedUserpayload != false) {
                 //
-                //geoInfoDefaults
-                $geoInfoIpAddress = $_SERVER['REMOTE_ADDR'];
-                $geoInfoCountryCode = '';
-                $geoInfoCountryName = '';
-                $geoInfoCity = '';
-                $geoInfoLoc = '';
-                $geoInfoLat = '';
-                $geoInfoLng = '';
-
-                //if($this->geoLocationInfo !== null && ($geoInfoIpAddress !== "127.0.0.1")) {
-                if($this->geoLocationInfo !== null){
-
-                    $geoInfoIpAddress = $this->geoLocationInfo->ip;
-                    $geoInfoCountryCode = $this->geoLocationInfo->country;
-                    $geoInfoCountryName = $this->geoLocationInfo->country_name;
-                    $geoInfoCity = $this->geoLocationInfo->city;
-                    $geoInfoLoc = $this->geoLocationInfo->loc;
-                    $geoInfoLat = $this->geoLocationInfo->latitude;
-                    $geoInfoLng = $this->geoLocationInfo->longitude;
-                }
-
+                $this->validatedUserpayload = $validatedUserpayload;
                 //
-                //var_dump($geoInfoIpAddress);
-                //var_dump($this->geoLocationInfo);
-                //die();
-                //
-                //
-                //####################################################################
-                // Valid Google user
-                // Generate our own JWT token and issue it
-                //
-                //data from presented idToken
                 $clientIdTokenLoginProvider = 'google.com';
-                $clientIdTokenSub = $payload['sub'];
+                $clientIdTokenSub = $validatedUserpayload['sub'];
                 //
-                //####
                 //
-                $fullname = trim($payload['name']);
+                // Aceess restrictions, email address
+                $userEmail = $validatedUserpayload['email'];
+                //
+                //SEND BAD ACTORS
+                if($this->authorizationRepository->getBadListedGuardianStatusByEmail($userEmail)){
+                    $response = $response->withAddedHeader('Cactus-reg-status','visitor/blacklisted');
+                    return $response->withStatus(403);
+                }
+                //
+                //Whitelisting
+                //
+                //############################
+                // START PREPARING RESPONSE
+                //############################
+                //populate basic info from the validated token
+                //Some SSO just give you a full name, not the parts.
+                $fullname = trim($validatedUserpayload['name']);
                 $firstname = '';
                 $lastname = '';
-                $avatarUrl = trim($payload['picture']);
-                $userEmail = $payload['email'];
+                $avatarUrl = trim($validatedUserpayload['picture']);
                 //
                 if(strlen($fullname)>0){
                     $name_parts = explode(" ", $fullname);
@@ -145,120 +164,83 @@ class AuthorizationController implements AuthorizationControllerInterface
                     $lastname = trim($name_parts[1]);
                 }
                 //
-                //###################################################################
-                //
-                // Deter Rogue Actors/Forbidden users(badlist)
-                //
-                if($this->authorizationRepository->getBadListedGuardianStatusByEmail($userEmail)){
-                    return $response->withStatus(403);
-                }
-
-                $existingGuardianData = $this->authorizationRepository->getGuardianByEmail($userEmail);
-                
                 $nowTime = date("Y-m-d h:i:sa");
                 $nowTime4Db = date("Y-m-d H:i:s");
-
+                $userDataPayload = [];
+                //Populate $userDataPayload
+                //######################
+                //
+                $userDataPayload['email'] = $userEmail;
+                $userDataPayload['fullname'] = $fullname;
+                $userDataPayload['firstname'] = $firstname;
+                $userDataPayload['lastname'] = $lastname;
+                $userDataPayload['avatarUrl'] = $avatarUrl;
+                //
+                // Establish if existing or new
+                //
+                $existingGuardianData = $this->authorizationRepository->getGuardianByEmail($userEmail);
+                //
                 if($existingGuardianData){
-                    //
-                    //guardian exists, use existing info
-                    //
-                    //From internal
-                    //
-                    $userUuid = $existingGuardianData["guardian_uuid"];
-                    $username = '@REGuser:'.$userEmail ;
-                    $userType = 'GUARDIAN_REG';
-                    $onboarded = '1';
-                    $accCreatedAt = $existingGuardianData["created_at"];
+                    //Returning guardian
+                    $userDataPayload['REG_STATUS'] = 'EXISTING';
                     
-                    $firstname = $existingGuardianData["firstname"];
-                    $lastname = $existingGuardianData["lastname"];
-                    $fullname = $firstname." ".$lastname;
+                    //Continue processing Existing user information
+                    //TODO:
+
+                }else{
+                    //Potential Registrant
+                    $userDataPayload['REG_STATUS'] = 'REGISTRANT';
+
+                    $useRegistrationCountryWhitelist = $this->authorizationRepository->useRegistrationCountryWhitelist();
                     //
-                    //picture
-                    //TODO: verify proper picture URL
-                    $avatarUrlFromDb = trim($existingGuardianData["picture_url"]);
-                    if(strlen($avatarUrlFromDb)>0){
-                        $avatarUrl =  $avatarUrlFromDb;
+                    if($useRegistrationCountryWhitelist){
+
+                        $registrantCountryIsWhitelisted = $this->authorizationRepository->getWhitelistedRegistrantCountryByCountryCodeExists($this->geoLocationInfo->country);
+                        if(!$registrantCountryIsWhitelisted){
+                            $response = $response->withAddedHeader('Cactus-reg-status','registrant/not-on-whitelist-country');
+                            return $response->withStatus(403);
+                        }
                     }
 
-                    //Update login info for this user
-                    // 
-                    
-                    // update recent logins text, use a json blob
-                    $previousLogins = $existingGuardianData["recent_logins"];
+                    //Check if existing in whitelist if using an email whitelist
+                    $useRegistrationEmailWhitelist = $this->authorizationRepository->useRegistrationEmailWhitelist();
                     //
-                    $updateGuardianLoginInfo = $this->authorizationRepository->updateGuardianLoginInfo(
-                        $userEmail,
-                        $userUuid,
-                        $nowTime,
-                        $previousLogins
-                    );
-
-                    $accLastLogin = $nowTime;
-
-                    if($updateGuardianLoginInfo){
-                        //$recentLogins = $updateGuardianLoginInfo['updatedRecentLogins'];
-                        $recentLogins = $previousLogins;
-                    }else{
-                        //TODO: Send system alert of this failure
-                        //$accLastLogin = $nowTime;
-                        $recentLogins = $previousLogins;
-                    }
-                }
-                else
-                {
-                    //
-                    //new guardian registrant required
-                        //use whitelist?
-                    $requireRegistrantWhitelisiting = $this->authorizationRepository->useRegistrationWhitelist();
-                    //
-                    if($requireRegistrantWhitelisiting){
+                    if($useRegistrationEmailWhitelist){
                         //Ensure whitelisted user
                         $registrantIsWhitelisted = $this->authorizationRepository->getWhitelistedRegistrantGuardianExistsByEmail($userEmail);
                         if(!$registrantIsWhitelisted){
-                            return $response->withStatus(401);
+                            $response = $response->withAddedHeader('Cactus-reg-status','registrant/not-on-whitelist-email');
+                            return $response->withStatus(403);
                         }
-                        //else{
-                            //insert 
-                        //}
                     }
-                    //
-                    //
-                    // kill too many flyby attempts
-                    //
-                    //
-                    $registrantIsReturning = $this->authorizationRepository->getFlybyRegistrantGuardianExistsByEmail($userEmail);
 
-                    //die($registrantIsReturning);
-                    //
-                    //
+                    // continue with the registration of applying user
+                    $registrantIsReturning = $this->authorizationRepository->getFlybyRegistrantGuardianExistsByEmail($userEmail);
                     if($registrantIsReturning){
-                        // fetch older data
+                        //update existing data
                         $returningRegistrantData = $this->authorizationRepository->getFlybyRegistrantGuardianByEmail($userEmail); 
-                        
                         //
                         $flyByCurrentCount = intval($returningRegistrantData['flyby_count']);
                         //
                         if($flyByCurrentCount>=$this->flyByMaxSightings){
+                            $response = $response->withAddedHeader('Cactus-reg-status','registrant/max-flyby');
                             return $response->withStatus(403);
                         }
                         //
                         $flyByCount = $flyByCurrentCount+1;
-                        //
                         $flyByData = [
                             'email' => $userEmail,
                             'flyby_at' => $nowTime4Db,
                             'flyby_count' => $flyByCount,
                         ];
-
+                        //
                         $sighting = $this->authorizationRepository->updateFlybyRegistrantGuardian($flyByData);
-                    }
-                    else
-                    {
                         //
-                        //
-                        //Log registrant flyby in case they abort, to ping them later if still not set up maxWait after
-                        //$flyByAt = $nowTime4Db;
+                        $response = $response->withAddedHeader('Cactus-reg-status','registrant/return');
+                        $response = $response->withStatus(201);
+
+                    }else{
+                        //create a new flyby entry with incoming data
                         $flyByReminder1At = date("Y-m-d H:i:s",strtotime("+".$this->flyByReminder1Days." days"));
                         $flyByReminder2At = date("Y-m-d H:i:s",strtotime("+".$this->flyByReminder2Days." days"));
                         $flyByValidUntil = date("Y-m-d H:i:s",strtotime("+".$this->flyByInvalidAfterDays." days"));
@@ -271,93 +253,96 @@ class AuthorizationController implements AuthorizationControllerInterface
                             'reminder_2_schedule_for'=> $flyByReminder2At,
                             'valid_until'=> $flyByValidUntil,
                             //###############################
-                            'geoinfo_ip_address' => $geoInfoIpAddress,
-                            'geoinfo_country_code' => $geoInfoCountryCode,
-                            'geoinfo_country_name' => $geoInfoCountryName,
-                            'geoinfo_city' => $geoInfoCity,
-                            'geoinfo_loc' => $geoInfoLoc,
-                            'geoinfo_lat' => $geoInfoLat,
-                            'geoinfo_lng' => $geoInfoLng,
+                            'geoinfo_ip_address' => $this->geoLocationInfo->ip,
+                            'geoinfo_country_code' => $this->geoLocationInfo->country,
+                            'geoinfo_country_name' => $this->geoLocationInfo->country_name,
+                            'geoinfo_city' => $this->geoLocationInfo->city,
+                            'geoinfo_loc' => $this->geoLocationInfo->loc,
+                            'geoinfo_lat' => $this->geoLocationInfo->latitude,
+                            'geoinfo_lng' => $this->geoLocationInfo->longitude,
                             //###############################
                         ];
-
-                        //die(var_dump($flyByData));
-                        //
-                        //
-
+                        //############################
                         $sighting = $this->authorizationRepository->logFlybyRegistrantGuardian($flyByData);
+                        //
+                        $response = $response->withAddedHeader('Cactus-reg-status','registrant/new');
+                        $response = $response->withStatus(201);
                     }
 
                     if(!$sighting){
+                        $response = $response->withAddedHeader('Cactus-reg-status','registrant/server-error');
                         return $response->withStatus(500);
                     }
-                    //
+
+                    //Proceed with responding to the overall request
                     //
                     $userUuid = 'CACTUS-000X-'.$userEmail;
-                    $username = '@newuser:'.$userEmail ;
-                    $userType = 'GUARDIAN_NEW';
-                    $onboarded = '0';
-                    $accCreatedAt = $nowTime;
-                    $accLastLogin = $nowTime;
-                    $recentLogins = 'None';
                     //
+                    $cactusJwtToken = $this->generateToken([
+                        'name'=>$fullname,
+                        'picture'=>$avatarUrl,
+                        'iss'=> $this->jwtSettings['jwtIss'],
+                        'aud' => $this->jwtSettings['jwtAud'],
+                        'sub' => $userUuid,
+                        'email'=>$userEmail,
+                        'sign_in_provider' =>$clientIdTokenLoginProvider,
+                    ]);
 
+                    //Populate
+                    //
+                    $userDataPayload['cactusJwtSub'] = $userUuid;
+                    $userDataPayload['cactusJwtToken'] = $cactusJwtToken;
+                    $userDataPayload['loginProvider'] = $clientIdTokenLoginProvider;
+                    $userDataPayload['loginProviderSub'] = $clientIdTokenSub;
+                    //
+                    //$userDataPayload['email'] = $userEmail;
+                    //$userDataPayload['fullname'] = $fullname;
+                    //$userDataPayload['firstname'] = $firstname;
+                    //$userDataPayload['lastname'] = $lastname;
+                    //$userDataPayload['avatarUrl'] = $avatarUrl;
+                    $userDataPayload['flybyTime'] = $nowTime4Db;
+                    //geoinfo
+                    $userDataPayload['geoInfoIpAddress'] = $this->geoLocationInfo->ip;
+                    $userDataPayload['geoInfoCountryCode'] = $this->geoLocationInfo->country;
+                    $userDataPayload['geoInfoCountryName'] = $this->geoLocationInfo->country_name;
+                    $userDataPayload['geoInfoCity'] = $this->geoLocationInfo->city;
+                    $userDataPayload['geoInfoLoc'] = $this->geoLocationInfo->loc;
+                    
+                    //Defaults
+                    $userDataPayload['inferredGender'] = $this->getInferredGender($firstname, $lastname, $this->geoLocationInfo->country );
+                    $userDataPayload['defaultGender'] = $this->defaultGender;
+                    //
+                    $userDataPayload['birthdayStart'] = $this->bithdayStartDate; //today-18y
+                    $userDataPayload['birthdayEnd'] = $this->bithdayStopDate;//today-110y
+                    //
+                    $userDataPayload['defaultLocationCountryCode'] = $this->defaultLocationCountryCode; //KE
+                    $userDataPayload['defaultLocationLoc'] = $this->defaultLocationLoc; //Nairobi
+                    $userDataPayload['defaultAccountType'] = $this->defaultAccountType;//INDIVIDUAL
+                    //
+                    /*
+                    $userDataPayload[''] = ;
+                    $userDataPayload[''] = ;
+                    */
+                    //
+                    //#######################
+                    $responsePayload = json_encode($userDataPayload);
+                    $response->getBody()->write($responsePayload);
+                    //#######################
                 }
-                //###################################################################
                 //
-                $token = $this->generateToken([
-                    'name'=>$fullname,
-                    'picture'=>trim($payload['picture']),
-                    'iss'=> $this->jwtSettings['jwtIss'],
-                    'aud' => $this->jwtSettings['jwtAud'],
-                    'sub' => $userUuid,
-                    'email'=>$payload['email'],
-                    'sign_in_provider' =>$clientIdTokenLoginProvider,
-                ]);
-                //
-                $userData = [
-                    'uid' => $userUuid,
-                    'userToken' => $token,
-                    'onboarded' => $onboarded,
-                    'email' => $userEmail,
-                    'avatarUrl' => $avatarUrl,
-                    'firstname' => $firstname,
-                    'lastname' => $lastname,
-                    'fullname' => $fullname,
-                    'username' => $username,
-                    'accountCreatedAt' => $accCreatedAt,
-                    'accountLastLogin' => $accLastLogin,
-                    'userType' => $userType,
-                    'loginProvider' => $clientIdTokenLoginProvider,
-                    'loginProviderSub' => $clientIdTokenSub,
-                    'recentLogins' => $recentLogins,
-                    //############
-                    'geoInfoIpAddress' => $geoInfoIpAddress,
-                    'geoInfoCountryCode' => $geoInfoCountryCode,
-                    'geoInfoCountryName' => $geoInfoCountryName,
-                    'geoInfoCity' => $geoInfoCity,
-                    'geoInfoLoc' => $geoInfoLoc,
-                    'geoInfoLat' => $geoInfoLat,
-                    'geoInfoLng' => $geoInfoLng,
-                    //############
-                    'inferredGender' => $this->getInferredGender($firstname, $lastname, $geoInfoCountryCode ),//$inferredGender,
-                ];
-                //
-                $payload = json_encode($userData);
-                $response->getBody()->write($payload);
-                //
+                //#######################
+                //$responsePayload = json_encode($userDataPayload);
+                //$response->getBody()->write($responsePayload);
                 return $response;
+                //#######################
                 //
             }else{
-                die("N/A");
+                $response = $response->withAddedHeader('Cactus-reg-status','visitor/auth-invalid');
                 return $response->withStatus(401);
             }
-            
             //################################################################
-
         }catch (Exception $e) {
-
-            die(var_dump($e->getMessage()));
+            $response = $response->withAddedHeader('Cactus-reg-status','visitor/auth-error');
             return $response->withStatus(401);
         }
 
@@ -368,15 +353,12 @@ class AuthorizationController implements AuthorizationControllerInterface
         
         $cache = new FilesystemAdapter();
         $verifier = IdTokenVerifier::createWithProjectIdAndCache($this->jwtSettings['jwtFirebaseProjectId'], $cache);
-        //$verifier = IdTokenVerifier::createWithProjectId($this->jwtSettings['jwtFirebaseProjectId']);
         
         //
         try {
             $token = $verifier->verifyIdToken($idToken);
-            //var_dump($token->payload());
             return $token->payload();
         } catch (IdTokenVerificationFailed $e) {
-            //var_dump($e->getMessage());
             return false;
         }
 
@@ -409,6 +391,7 @@ class AuthorizationController implements AuthorizationControllerInterface
         return JWT::encode($payload, $this->jwtSettings['secret_key'], $this->jwtSettings['algorithm']);
     }
 
+    //######################
     private function getInferredGender(String $firstname, String $lastname, $countryCode){
 
         $firstname = trim($firstname);

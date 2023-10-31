@@ -30,7 +30,10 @@ return function (ContainerBuilder $containerBuilder){
             AuthorizationRepositoryInterface::class => function (ContainerInterface $c) {
                 $dbConnection = $c->get(SettingsInterface::class)->get('dbSettings')['dbConnection'];
                 $dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                //
+                //return new AuthorizationRepository($dbConnection, false, false);
                 return new AuthorizationRepository($dbConnection);
+                
             }
 
         //Guardian

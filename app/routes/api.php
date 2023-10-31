@@ -4,7 +4,7 @@ declare(strict_types=1);
 use App\Controllers\Authorization\AuthorizationControllerInterface;
 use App\Controllers\Guardian\GuardianControllerInterface;
 use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
-//use App\Settings\SettingsInterface;
+use App\Middleware\CustomHeader\CustomHeaderMiddleware;
 use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
 //
 use Psr\Http\Message\ResponseInterface as Response;
@@ -15,12 +15,11 @@ use Slim\App;
 use DI\Container;
 //use DI\ContainerBuilder;
 
-
-//return function (App $app, ContainerBuilder $containerBuilder) {
 return function (App $app, Container $dependencyContainer) {
 
+    $app->add($app->getContainer()->get(CustomHeaderMiddleware::class));
     $app->add($app->getContainer()->get(IpGeolocationMiddleware::class));
-
+    //
     $app->group('/api/v1', function (RouteCollectorProxy $routeGroup) {
 
         //var_dump($this->getContainer());
@@ -54,12 +53,10 @@ return function (App $app, Container $dependencyContainer) {
         });
     
     });
-
+    //
     $app->group('/api/v1', function (RouteCollectorProxy $group) use($app){
         //Authenticated Routes
         $group->get('/user/{id}', [$this->get(GuardianControllerInterface::class),'getUser']);
     })->add($app->getContainer()->get(AuthorizationMiddlewareInterface::class));
-
     
-
 };

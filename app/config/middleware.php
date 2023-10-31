@@ -15,7 +15,7 @@ use DI\ContainerBuilder;
 
 use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
 use App\Middleware\Authorization\AuthorizationMiddleware;
-
+use App\Middleware\CustomHeader\CustomHeaderMiddleware;
 use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
 
 return function (ContainerBuilder $containerBuilder) {
@@ -29,6 +29,9 @@ return function (ContainerBuilder $containerBuilder) {
             $settings = $c->get(SettingsInterface::class);
             $jwtSettings = $settings->get('jwtSettings');
             return new AuthorizationMiddleware($jwtSettings);
+        },
+        CustomHeaderMiddleware::class => function (ContainerInterface $c) {
+            return new CustomHeaderMiddleware();
         },
     ]);
 };

@@ -12,11 +12,13 @@ use PDO\Exception as PDOEx;
 class AuthorizationRepository implements  AuthorizationRepositoryInterface
 {
     private $dbConnection;
-    private $useRegistrationWhitelist;
+    private $useRegistrationCountryWhitelist;
+    private $useRegistrationEmailWhitelist;
 
-    public function __construct(PDO $dbConnection, bool $useRegistrationWhitelist=false){
+    public function __construct(PDO $dbConnection, bool $useRegistrationCountryWhitelist=false, bool $useRegistrationEmailWhitelist=false){
         $this->dbConnection = $dbConnection;
-        $this->useRegistrationWhitelist = $useRegistrationWhitelist;
+        $this->useRegistrationCountryWhitelist = $useRegistrationCountryWhitelist;
+        $this->useRegistrationEmailWhitelist = $useRegistrationEmailWhitelist;
     }
 
     public function getPDO(){
@@ -33,20 +35,34 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         return $count > 0;
     }
 
-
     //getBadListedGuardianByEmail
     //public function getBadlistedGuardianByEmail(String $email){
         //lookup email in the badlist 
 
     //}
+
     //createBadListedGuardian
     //deleteBadListedGuardianByEmail
-
+    //
     //useRegistrationWhitelist
-    public function useRegistrationWhitelist(){
-        return $this->useRegistrationWhitelist;
+    public function useRegistrationEmailWhitelist(){
+        return $this->useRegistrationEmailWhitelist;
     }
     //
+    //useRegistrationCountryWhitelist
+    public function useRegistrationCountryWhitelist(){
+        return $this->useRegistrationCountryWhitelist;
+    }
+
+    public function getWhitelistedRegistrantCountryByCountryCodeExists(String $countryCode){
+        //lookup email status in the badlist
+        $stmt = $this->dbConnection->prepare("SELECT COUNT(*) FROM registrant_country_whitelist_by_cc WHERE country_code = :country_code");
+        $stmt->bindParam(':country_code', $countryCode);
+        $stmt->execute();
+        $count = $stmt->fetchColumn();
+        return $count > 0;
+
+    }
     //
     //getWhitelistedGuardianByEmail
     public function getWhitelistedRegistrantGuardianExistsByEmail(String $email){
