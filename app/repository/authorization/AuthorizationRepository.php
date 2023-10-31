@@ -6,8 +6,8 @@ namespace App\Repository\Authorization;
 use App\Repository\Authorization\AuthorizationRepositoryInterface;
 
 use PDO;
-use PDO\Exception as PDOEx;
-//use Exception;
+//use PDO\Exception;
+use Exception;
 
 class AuthorizationRepository implements  AuthorizationRepositoryInterface
 {
@@ -94,10 +94,10 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
 
     public function logFlybyRegistrantGuardian(array $flybyData){
 
-        //try{
+        try{
         //
-        $sql = "INSERT INTO registrant_flyby (name, email, flyby_at, reminder_1_schedule_for, reminder_2_schedule_for, valid_until, geoinfo_ip_address, geoinfo_country_code, geoinfo_country_name, geoinfo_city, geoinfo_loc, geoinfo_lat, geoinfo_lng) VALUES (
-            :name, :email, :flyby_at, :reminder_1_schedule_for, :reminder_2_schedule_for, :valid_until, :geoinfo_ip_address, :geoinfo_country_code, :geoinfo_country_name, :geoinfo_city, :geoinfo_loc, :geoinfo_lat, :geoinfo_lng )";
+        $sql = "INSERT INTO registrant_flyby (name, email, flyby_at, reminder_1_schedule_for, reminder_2_schedule_for, valid_until, geoinfo_ip_address, geoinfo_country_code, geoinfo_country_name, geoinfo_city, geoinfo_loc, geoinfo_lat, geoinfo_lng, created_at) VALUES (
+            :name, :email, :flyby_at, :reminder_1_schedule_for, :reminder_2_schedule_for, :valid_until, :geoinfo_ip_address, :geoinfo_country_code, :geoinfo_country_name, :geoinfo_city, :geoinfo_loc, :geoinfo_lat, :geoinfo_lng, :created_at )";
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bindValue(":name",$flybyData['name']);
         $stmt->bindValue(":email",$flybyData['email']);
@@ -113,20 +113,22 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $stmt->bindValue(":geoinfo_loc",$flybyData['geoinfo_loc']);
         $stmt->bindValue(":geoinfo_lat",$flybyData['geoinfo_lat']);
         $stmt->bindValue(":geoinfo_lng",$flybyData['geoinfo_lng']);
+        $stmt->bindValue(":created_at",$flybyData['created_at']);
+
         //
         $stmt->execute();
         $count = $stmt->rowCount();
         
         return $count >0;
-        //}catch (PDOEx $e) {  
-            //die(var_dump($e));
-            //return false;
-        //}
+        }catch (\PDOException $e) {  
+            error_log( $e->getMessage());
+            return false;
+        }
     }
 
     public function updateFlybyRegistrantGuardian(array $flybyData){
         //
-        //try{
+        try{
         //
         $sql = "UPDATE registrant_flyby SET flyby_at=:flyby_at, flyby_count=:flyby_count WHERE email=:email";
         //
@@ -138,10 +140,10 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $count = $stmt->rowCount();
         
         return $count >0;
-        //}catch (PDOException $e) {  
-
-            //return false;
-        //}
+        }catch (\PDOException $e) {  
+            error_log( $e->getMessage());
+            return false;
+        }
 
     }
 

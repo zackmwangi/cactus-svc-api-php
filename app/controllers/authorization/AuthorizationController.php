@@ -16,7 +16,7 @@ use UnexpectedValueException;
 //use Google\Client as GooGleClient;
 //use Google\Service\Books\Resource\Onboarding;
 //
-use Exception;
+//use Exception;
 use \stdClass;
 use Google\Service\BigtableAdmin\Split;
 
@@ -51,21 +51,21 @@ class AuthorizationController implements AuthorizationControllerInterface
         $this->authorizationRepository = $authorizationRepository;
         //
         //Registrant Defaults
-        $this->flyByMaxSightings = 50;//TODO: move this to Settings
+        $this->flyByMaxSightings = 100;//TODO: move this to Settings
         //
         $this->flyByReminder1Days = '1';
         $this->flyByReminder2Days = '3';
         $this->flyByInvalidAfterDays = '30';
         //
-        $this->geoLocationInfo = null;
+        //$this->geoLocationInfo = null;
         $this->validatedUserpayload = null;
-        $this->geoLocationInfo = new stdClass();
+        //$this->geoLocationInfo = new stdClass();
         //
-        $this->defaultLocationCountryCode = '';
-        $this->defaultLocationLoc = '';
+        $this->defaultLocationCountryCode = 'KE';
+        $this->defaultLocationLoc = '-1.286389, 36.817223';
         //
-        $this->bithdayStartDate = '';
-        $this->bithdayStopDate = '';
+        $this->bithdayStartDate = date("Y-m-d",strtotime("-40150 days"));
+        $this->bithdayStopDate = date("Y-m-d",strtotime("-6575 days"));
         //
         $this->defaultGender = 'F';
         $this->defaultAccountType = 'GUARDIAN';
@@ -93,26 +93,60 @@ class AuthorizationController implements AuthorizationControllerInterface
         //GeoLocation info
         //geoInfoDefaults
         $geoInfoIpAddress = $_SERVER['REMOTE_ADDR'];
-        $geoInfoCountryCode = '';
-        $geoInfoCountryName = '';
-        $geoInfoCity = '';
-        $geoInfoLoc = '';
-        $geoInfoLat = '';
-        $geoInfoLng = '';
+        $geoInfoCountryCode = "";
+        $geoInfoCountryName = "";
+        $geoInfoCity = "";
+        $geoInfoLoc = "";
+        $geoInfoLat = 0;
+        $geoInfoLng = 0;
         //
-        //$this->geoLocationInfo = new stdClass();
-        $this->geoLocationInfo->ip = $geoInfoIpAddress;
-        $this->geoLocationInfo->country = $geoInfoCountryCode;
-        $this->geoLocationInfo->country_name = $geoInfoCountryName;
-        $this->geoLocationInfo->city = $geoInfoCity;
-        $this->geoLocationInfo->loc = $geoInfoLoc;
-        $this->geoLocationInfo->latitude = $geoInfoLat;
-        $this->geoLocationInfo->longitude = $geoInfoLng;
+        /*
+        $mygeoLocationInfo = new stdClass();
+        
+        */
         //
         $geolocation = $request->getAttribute('geolocation');
-        if($geolocation!==''){
-            $this->geoLocationInfo = $geolocation;
+        if(($geolocation!=null || $geolocation!=='') && ($geolocation->ip !='127.0.0.1')){
+            if($geolocation->ip !='127.0.0.1'){
+                $geoInfoIpAddress = $geolocation->ip;
+                $geoInfoCountryCode = $geolocation->country;
+                $geoInfoCountryName = $geolocation->country_name;
+                $geoInfoCity = $geolocation->city;
+                $geoInfoLoc = $geolocation->loc;
+                $geoInfoLat = $geolocation->latitude;
+                $geoInfoLng = $geolocation->longitude;
+            }
         }
+        //#########
+        $mygeoLocationInfo = new stdClass();
+        //
+        $mygeoLocationInfo->ip = $geoInfoIpAddress;
+        $mygeoLocationInfo->country = $geoInfoCountryCode;
+        $mygeoLocationInfo->country_name = $geoInfoCountryName;
+        $mygeoLocationInfo->city = $geoInfoCity;
+        $mygeoLocationInfo->loc = $geoInfoLoc;
+        $mygeoLocationInfo->latitude = $geoInfoLat;
+        $mygeoLocationInfo->longitude = $geoInfoLng;
+        //
+        $this->geoLocationInfo = $mygeoLocationInfo;
+        //#########
+
+        /*
+        else{
+            
+            $mygeoLocationInfo = new stdClass();
+            //$mygeoLocationInfo->ip = $geoInfoIpAddress;
+            $mygeoLocationInfo->ip = $geoInfoCountryCode;
+            $mygeoLocationInfo->country = $geoInfoCountryCode;
+            $mygeoLocationInfo->country_name = $geoInfoCountryName;
+
+            $mygeoLocationInfo->city = $geoInfoCity;
+            $mygeoLocationInfo->loc = $geoInfoLoc;
+            $mygeoLocationInfo->latitude = $geoInfoLat;
+            $mygeoLocationInfo->longitude = $geoInfoLng;
+            $this->geoLocationInfo = $mygeoLocationInfo;  
+        }
+        */
         //
         //return by authprovider
         switch($authProvider){
@@ -198,6 +232,7 @@ class AuthorizationController implements AuthorizationControllerInterface
                         $registrantCountryIsWhitelisted = $this->authorizationRepository->getWhitelistedRegistrantCountryByCountryCodeExists($this->geoLocationInfo->country);
                         if(!$registrantCountryIsWhitelisted){
                             $response = $response->withAddedHeader('Cactus-reg-status','registrant/not-on-whitelist-country');
+                            error_log("Whitelist country entry missing for attempting registrant user " . $userEmail." with country ". $this->geoLocationInfo->country);
                             return $response->withStatus(403);
                         }
                     }
@@ -210,6 +245,7 @@ class AuthorizationController implements AuthorizationControllerInterface
                         $registrantIsWhitelisted = $this->authorizationRepository->getWhitelistedRegistrantGuardianExistsByEmail($userEmail);
                         if(!$registrantIsWhitelisted){
                             $response = $response->withAddedHeader('Cactus-reg-status','registrant/not-on-whitelist-email');
+                            error_log("Whitelist email entry missing for attempting registrant user " . $userEmail);
                             return $response->withStatus(403);
                         }
                     }
@@ -224,6 +260,7 @@ class AuthorizationController implements AuthorizationControllerInterface
                         //
                         if($flyByCurrentCount>=$this->flyByMaxSightings){
                             $response = $response->withAddedHeader('Cactus-reg-status','registrant/max-flyby');
+                            error_log("max flyby attempts exceeded for user " . $userEmail);
                             return $response->withStatus(403);
                         }
                         //
@@ -261,7 +298,13 @@ class AuthorizationController implements AuthorizationControllerInterface
                             'geoinfo_lat' => $this->geoLocationInfo->latitude,
                             'geoinfo_lng' => $this->geoLocationInfo->longitude,
                             //###############################
+                            'created_at' => $nowTime4Db,
                         ];
+                        //
+                        //error_log($flyByData['geoinfo_country_code']);
+                        
+                        
+                        //
                         //############################
                         $sighting = $this->authorizationRepository->logFlybyRegistrantGuardian($flyByData);
                         //
@@ -270,8 +313,12 @@ class AuthorizationController implements AuthorizationControllerInterface
                     }
 
                     if(!$sighting){
+                        error_log("Could not save or update registrant information for user ".$userEmail);
                         $response = $response->withAddedHeader('Cactus-reg-status','registrant/server-error');
                         return $response->withStatus(500);
+                    }
+                    else{
+                        error_log('Yes did sight');
                     }
 
                     //Proceed with responding to the overall request
@@ -307,7 +354,6 @@ class AuthorizationController implements AuthorizationControllerInterface
                     $userDataPayload['geoInfoCountryName'] = $this->geoLocationInfo->country_name;
                     $userDataPayload['geoInfoCity'] = $this->geoLocationInfo->city;
                     $userDataPayload['geoInfoLoc'] = $this->geoLocationInfo->loc;
-                    
                     //Defaults
                     $userDataPayload['inferredGender'] = $this->getInferredGender($firstname, $lastname, $this->geoLocationInfo->country );
                     $userDataPayload['defaultGender'] = $this->defaultGender;
@@ -337,11 +383,14 @@ class AuthorizationController implements AuthorizationControllerInterface
                 //#######################
                 //
             }else{
+                //echo ("No payload available");
+                error_log("invalid idtoken: ".$$clientIdToken);
                 $response = $response->withAddedHeader('Cactus-reg-status','visitor/auth-invalid');
                 return $response->withStatus(401);
             }
             //################################################################
-        }catch (Exception $e) {
+        }catch (\Exception $e) {
+            error_log($e->getMessage());
             $response = $response->withAddedHeader('Cactus-reg-status','visitor/auth-error');
             return $response->withStatus(401);
         }
@@ -350,15 +399,16 @@ class AuthorizationController implements AuthorizationControllerInterface
 
     private function validateIdToken($idToken)
     {
-        
+        //echo "$idToken";
         $cache = new FilesystemAdapter();
         $verifier = IdTokenVerifier::createWithProjectIdAndCache($this->jwtSettings['jwtFirebaseProjectId'], $cache);
-        
+        //$verifier = IdTokenVerifier::createWithProjectId($this->jwtSettings['jwtFirebaseProjectId']);
         //
         try {
             $token = $verifier->verifyIdToken($idToken);
             return $token->payload();
         } catch (IdTokenVerificationFailed $e) {
+            error_log($e->getMessage());
             return false;
         }
 
