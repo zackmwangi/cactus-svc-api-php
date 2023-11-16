@@ -9,7 +9,6 @@
         "psr/log": "^3.0",
         "monolog/monolog": "^3.4",
         "firebase/php-jwt": "^6.9",
-        "google/apiclient": "^2.15.0",
         "php-di/php-di": "^7.0",
         "kreait/firebase-php": "^7.0",
         "kreait/firebase-tokens": "^4.2",
