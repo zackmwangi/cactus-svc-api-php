@@ -15,20 +15,35 @@ include(__DIR__ . '/../app/settings/Settings.php');
 include(__DIR__ . '/../app/repository/authorization/AuthorizationRepositoryInterface.php');
 include(__DIR__ . '/../app/repository/authorization/AuthorizationRepository.php');
 //
+include(__DIR__ . '/../app/repository/onboarding/registrant/RegistrantRepositoryInterface.php');
+include(__DIR__ . '/../app/repository/onboarding/registrant/RegistrantRepository.php');
+//
+include(__DIR__ . '/../app/repository/onboarding/options/OptionsRepositoryInterface.php');
+include(__DIR__ . '/../app/repository/onboarding/options/OptionsRepository.php');
+//
 include(__DIR__ . '/../app/repository/streaming/StreamingRepositoryInterface.php');
 include(__DIR__ . '/../app/repository/streaming/StreamingRepository.php');
+//
+include(__DIR__ . '/../app/middleware/requestfilter/RequestFilterMiddlewareInterface.php');
+include(__DIR__ . '/../app/middleware/requestfilter/RequestFilterMiddleware.php');
 //
 include(__DIR__ . '/../app/middleware/customheader/CustomHeaderMiddlewareInterface.php');
 include(__DIR__ . '/../app/middleware/customheader/CustomHeaderMiddleware.php');
 //
 include(__DIR__ . '/../app/middleware/ipgeolocation/IpGeolocationMiddlewareInterface.php');
 include(__DIR__ . '/../app/middleware/ipgeolocation/IpGeolocationMiddleware.php');
-
+//
+include(__DIR__ . '/../app/middleware/authorization/OnboardingAuthMiddlewareInterface.php');
+include(__DIR__ . '/../app/middleware/authorization/OnboardingAuthMiddleware.php');
+//
 include(__DIR__ . '/../app/middleware/authorization/AuthorizationMiddlewareInterface.php');
 include(__DIR__ . '/../app/middleware/authorization/AuthorizationMiddleware.php');
 //
 include(__DIR__ . '/../app/controllers/authorization/AuthorizationControllerInterface.php');
 include(__DIR__ . '/../app/controllers/authorization/AuthorizationController.php');
+//
+include(__DIR__ . '/../app/controllers/onboarding/OnboardingControllerInterface.php');
+include(__DIR__ . '/../app/controllers/onboarding/OnboardingController.php');
 //
 include(__DIR__ . '/../app/controllers/streaming/StreamingControllerInterface.php');
 include(__DIR__ . '/../app/controllers/streaming/StreamingController.php');
