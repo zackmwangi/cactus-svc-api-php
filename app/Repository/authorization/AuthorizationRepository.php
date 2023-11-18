@@ -14,7 +14,7 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
     private $dbConnection;
     private $useRegistrationCountryWhitelist;
     private $useRegistrationEmailWhitelist;
-
+    #
     public function __construct(PDO $dbConnection, bool $useRegistrationCountryWhitelist=false, bool $useRegistrationEmailWhitelist=false){
         $this->dbConnection = $dbConnection;
         $this->useRegistrationCountryWhitelist = $useRegistrationCountryWhitelist;

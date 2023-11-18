@@ -55,7 +55,7 @@ class AuthorizationController implements AuthorizationControllerInterface
         //if token invalid,
         // exit - code 401
 
-        //Check if user exists
+        //Check if user auth profile for provider exists
         //If exists
             //Continue with authorized user
                 //Assemble identity data from login profile
@@ -68,10 +68,11 @@ class AuthorizationController implements AuthorizationControllerInterface
                 //Respond to request - code 201
                 // Registration
     }
- 
+    //
     private function authorizeIdtokenGoogle(String $clientIdToken, Response $response){
     
     }
+    //
     /*
     private function authorizeIdtokenFacebook(String $clientIdToken, Response $response){
     

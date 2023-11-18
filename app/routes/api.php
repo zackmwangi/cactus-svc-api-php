@@ -2,11 +2,35 @@
 declare(strict_types=1);
 
 use App\Controllers\Authorization\AuthorizationControllerInterface;
-use App\Controllers\Guardian\GuardianControllerInterface;
+
+use App\Controllers\Onboarding\OnboardingControllerInterface;
+
+use App\Controllers\Profile\ProfileControllerInterface;
+
+//use App\Controllers\Guardian\GuardianControllerInterface;
+//
+use App\Controllers\Activity\OfferingControllerInterface;
+
+use App\Controllers\Feed\FeedControllerInterface;
+//
+use App\Controllers\Bucketlist\BucketlistControllerInterface;
+//
+use App\Controllers\Shop\ShopControllerInterface;
+//
+use App\Controllers\Messaging\MessagingControllerInterface;
+//
+use App\Controllers\Notifications\NotificationsControllerInterface;
+
 //
 use App\Controllers\Streaming\StreamingControllerInterface;
 //
+use App\Controllers\Healthz\HealthzControllerInterface;
+//
+//
+use App\Middleware\Authorization\AuthorizationInitMiddlewareInterface;
 use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
+use App\Middleware\Authorization\OnboardingAuthMiddlewareInterface;
+use App\Middleware\RequestFilter\RequestFilterMiddleware;
 use App\Middleware\CustomHeader\CustomHeaderMiddleware;
 use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
 //
@@ -28,13 +52,13 @@ return function (App $app, Container $dependencyContainer) {
     $app->group('/api/v1/authorize', function (RouteCollectorProxy $routeGroup) {
         //Open routes
         $routeGroup->post('/provider/{authProvider}', [$this->get(AuthorizationControllerInterface::class),'authorizeIdtoken']);
-    });
+    })->add($app->getContainer()->get(AuthorizationInitMiddlewareInterface::class));
     //
     //Registrant-only routes
     $app->group('/api/v1/onboarding', function (RouteCollectorProxy $group) use($app){
         //supercat/?terms
         //Execute a search
-        $group->get('/activities/search/supercat/{id}', [$this->get(GOnboardingControllerInterface::class),'searchActivitiesInSupercat']);
+        $group->get('/activities/search/supercat/{id}', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercat']);
         //list activities by cat and subcat
         $group->get('/activities/list/cat/{id}', [$this->get(OnboardingControllerInterface::class),'getActivitiesInCcat']);
         $group->get('/activities/list/subcat/{id}', [$this->get(OnboardingControllerInterface::class),'getActivitiesInSubcat']);
@@ -64,7 +88,7 @@ return function (App $app, Container $dependencyContainer) {
 
         //##
         //Activity - Landing
-        $group->get('/ac/home', [$this->get(OfferingControllerInterface::class),'getOfferingsLanding']);
+        $group->get('/offering/home', [$this->get(OfferingControllerInterface::class),'getOfferingsLanding']);
 
         //##
         //Dashboard
@@ -135,12 +159,12 @@ return function (App $app, Container $dependencyContainer) {
     //
     //TODO: Add health endpoints
     //
-    /*
+    
     $app->group('/api/v1/healthz', function (RouteCollectorProxy $routeGroup) {
         //Open routes
-        $routeGroup->post('/live', [$this->get(AuthorizationControllerInterface::class),'authorizeIdtoken']);
-        $routeGroup->post('/ready', [$this->get(AuthorizationControllerInterface::class),'authorizeIdtoken']);
+        $routeGroup->get('/live', [$this->get(HealthzControllerInterface::class),'isLive']);
+        $routeGroup->get('/ready', [$this->get(HealthzControllerInterface::class),'isReady']);
     });
-    */
+    
     
 };

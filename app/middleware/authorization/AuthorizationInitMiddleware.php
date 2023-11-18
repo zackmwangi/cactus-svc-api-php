@@ -6,9 +6,9 @@ namespace App\Middleware\Authorization;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
-use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
+use App\Middleware\Authorization\AuthorizationInitMiddlewareInterface;
 
-class AuthorizationMiddleware implements AuthorizationMiddlewareInterface
+class AuthorizationInitMiddleware implements AuthorizationInitMiddlewareInterface
 {
     private $jwtSettings;
 
@@ -18,13 +18,13 @@ class AuthorizationMiddleware implements AuthorizationMiddlewareInterface
     }
 
     public function __invoke(Request $request, RequestHandler $handler)
-    { 
-        if (!($request->hasHeader('X-CLIENT-NACHA-ID-TOKEN')&&$request->hasHeader('X-CLIENT-TYPE'))) {
+    {
+        if (!($request->hasHeader('X-CLIENT-INIT-ID-TOKEN')&&$request->hasHeader('X-CLIENT-TYPE'))) {
             //BAD REQUEST
             $responseFactory = new \Nyholm\Psr7\Factory\Psr17Factory();
-            return $responseFactory->createResponse(403);
+            return $responseFactory->createResponse(401);
         }
-
+        
         $response = $handler->handle($request);
         return $response;
     }

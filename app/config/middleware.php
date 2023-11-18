@@ -13,6 +13,9 @@ use App\Settings\SettingsInterface;
 use Psr\Container\ContainerInterface;
 use DI\ContainerBuilder;
 
+use App\Middleware\Authorization\AuthorizationInitMiddlewareInterface;
+use App\Middleware\Authorization\AuthorizationInitMiddleware;
+
 use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
 use App\Middleware\Authorization\AuthorizationMiddleware;
 
@@ -22,7 +25,6 @@ use App\Middleware\Authorization\OnboardingAuthMiddleware;
 use App\Middleware\CustomHeader\CustomHeaderMiddleware;
 use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
 use App\Middleware\RequestFilter\RequestFilterMiddleware;
-
 
 
 return function (ContainerBuilder $containerBuilder) {
@@ -35,7 +37,12 @@ return function (ContainerBuilder $containerBuilder) {
             $ipInfoAccessToken = $settings->get('IpInfoAccessToken');
             return new IpGeolocationMiddleware($ipInfoAccessToken);
         },
-        OnboardingAuthMiddleware::class => function (ContainerInterface $c) {
+        AuthorizationInitMiddlewareInterface::class => function (ContainerInterface $c) {
+            $settings = $c->get(SettingsInterface::class);
+            $jwtSettings = $settings->get('jwtSettings');
+            return new AuthorizationInitMiddleware($jwtSettings);
+        },
+        OnboardingAuthMiddlewareInterface::class => function (ContainerInterface $c) {
             $settings = $c->get(SettingsInterface::class);
             $jwtSettings = $settings->get('jwtSettings');
             return new OnboardingAuthMiddleware($jwtSettings);
