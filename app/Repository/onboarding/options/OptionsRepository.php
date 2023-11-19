@@ -20,4 +20,25 @@ class OnboardingOptionsRepository implements  OnboardingOptionsRepositoryInterfa
         return $this->dbConnection;
     }
 
+    //###############
+    //Defaults
+    public function getSupercategories(){}
+    public function getCategoriesinSupercat($supercategoryId){}
+    public function getSubcategoriesinCat($categoryId){}
+        //
+    public function getPopularActivityOptionsForSuperCategory($supercategoryId){}
+    public function getPopularActivityOptionsForCategory($categoryId){}
+    public function getPopularActivityOptionsForSubCategory($subcategoryId){}
+        //
+    //###############
+    //Search
+        //
+    public function getActivityOptionsForSuperCategory($supercategoryId){}
+        //
+    public function getActivityOptionsForCategory($categoryId){}
+    public function getActivityOptionsForSubCategory($subcategoryId){}
+        //
+    public function searchActivityOptionsForSuperCategory($supercategoryId){}
+        //
+
 }

@@ -7,11 +7,28 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 use App\Controllers\Onboarding\OnboardingControllerInterface;
-
+use App\Repository\Onboarding\OnboardingRepository;
 
 class OnboardingController implements OnboardingControllerInterface
 {
-    public function __construct(){}
+    private $onboardingRepository ;
+    //Registrant by Auth provider
+    //Options
+
+    public function __construct( OnboardingRepository $onboardingRepository){
+        $this->onboardingRepository = $onboardingRepository ;
+    }
+
+    //Ondemand listing for empathy
+    //list popular for applicant - kid (age, gender, locality)
+    
+    //list popular for applicant  - (age, gender, locality)
+    //public function getPopularActivitiesAll(){}
+
+    //list popular for applicant/kid per cat/subcat
+    //
+    //###########
+
 
     //search for activities in supercat
     public function searchActivitiesInSupercat(){}

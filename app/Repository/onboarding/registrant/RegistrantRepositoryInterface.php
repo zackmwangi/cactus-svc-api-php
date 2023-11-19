@@ -5,7 +5,7 @@ namespace App\Repository\Onboarding\Registrant;
 
 use PDO;
 
-interface OnboardingRegistrantRepositoryInterface
+interface RegistrantRepositoryInterface
 {
 
     public function __construct(PDO $dbConnection, bool $useRegistrationWhitelist);

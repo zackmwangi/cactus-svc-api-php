@@ -8,6 +8,6 @@ use PDO;
 interface OnboardingOptionsRepositoryInterface
 {
 
-    public function __construct(PDO $dbConnection, bool $useRegistrationWhitelist);
+    public function __construct(PDO $dbConnection);
 
 }

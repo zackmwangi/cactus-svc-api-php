@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace App\Repository\Authorization;
 
-use App\Repository\Authorization\AuthorizationRepositoryInterface;
-
 use PDO;
 //use PDO\Exception;
 use Exception;
@@ -24,5 +22,34 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
     public function getPDO(){
         return $this->dbConnection;
     }
+
+    //Existing user
+    public function getAuthProfileForProviderAndTokenId($provider,$tokenId){
+        //return
+        //Existing user profile
+        //or
+        //Registrant profile for new registration
+    }
+    //
+    public function getAuthProfileForTokenIdGoogle($tokenId){
+        
+    }
+
+    public function getAuthProfileForTokenIdApple($tokenId){}
+
+    //public function getAuthProfileForTokenIdFacebook($tokenId){}
+
+    //New Registrant
+    public function getRegistrantAuthProfileForProviderAndTokenId($provider,$tokenId){}
+
+    public function getRegistrantAuthProfileForTokenIdGoogle($tokenId){}
+
+    public function getRegistrantAuthProfileForTokenIdApple($tokenId){}
+
+    //public function getRegistrantAuthProfileForTokenIdFacebook($tokenId){}
+    //
+    //
+
+    
     
 }

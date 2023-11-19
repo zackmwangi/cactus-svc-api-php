@@ -21,8 +21,11 @@ class AuthorizationController implements AuthorizationControllerInterface
     private $jwtSettings;
     private $authorizationRepository;
     //
+    private $validatedUserIdTokepayload;
+    //
     ////////////////////////////
     //
+    /*
     private $flyByMaxSightings;
 
     private String $flyByReminder1Days;
@@ -39,6 +42,7 @@ class AuthorizationController implements AuthorizationControllerInterface
 
     private $defaultGender;
     private $defaultAccountType;
+    */
     //
     ////////////////////////////
     //
@@ -51,11 +55,51 @@ class AuthorizationController implements AuthorizationControllerInterface
 
     public function authorizeIdtoken(Request $request, Response $response, array $args){
         //Check Token validity
+        //read details from clientId Header
+        
 
-        //if token invalid,
-        // exit - code 401
+        $clientIdTokenArray = $request->getHeader('X-CLIENT-INIT-ID-TOKEN');
+        $clientIdToken = trim($clientIdTokenArray[0]);
 
-        //Check if user auth profile for provider exists
+        $clientTypeArray = $request->getHeader('X-CLIENT-TYPE');
+        $clientType = trim($clientTypeArray[0]);
+
+        $validatedUserIdTokepayload = $this->validateIdToken($clientIdToken);
+        //
+        if($validatedUserIdTokepayload == false) {
+            error_log("invalid user id token: ".$clientIdToken);
+            $response = $response->withAddedHeader('Cactus-reg-status','visitor/auth-invalid');
+            return $response->withStatus(401);
+        }
+
+        $this->validatedUserIdTokepayload = $validatedUserIdTokepayload;
+        $authProvider = $args['authProvider'];
+        //
+        //
+            //
+            //$validatedUserIdTokepayload = $this->validateIdToken($clientIdToken);
+            //
+            //-----------------
+            //
+            //
+            switch($authProvider){
+                case 'google':
+                default:
+                //return $this->authorizeIdtokenGoogle($clientIdToken, $response);
+                return $response->withStatus(200);
+                break;
+            }
+            //
+            //
+            //-----------------
+       
+    }
+    //
+    private function authorizeIdtokenGoogle(String $clientIdToken, Response $response){
+
+        //Check if user auth profile for google_provider exists
+        //read from auth_profiles_google
+        //
         //If exists
             //Continue with authorized user
                 //Assemble identity data from login profile
@@ -67,10 +111,6 @@ class AuthorizationController implements AuthorizationControllerInterface
                 //Assembe authorized registrant data from onboarding wing
                 //Respond to request - code 201
                 // Registration
-    }
-    //
-    private function authorizeIdtokenGoogle(String $clientIdToken, Response $response){
-    
     }
     //
     /*

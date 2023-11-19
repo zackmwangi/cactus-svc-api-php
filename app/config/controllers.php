@@ -19,6 +19,7 @@ use App\Repository\Authorization\AuthorizationRepositoryInterface;
 #
 use App\Controllers\Onboarding\OnboardingControllerInterface;
 use App\Controllers\Onboarding\OnboardingController;
+use App\Repository\Onboarding\OnboardingRepositoryInterface;
 #
 //
 use App\Controllers\Profile\ProfileControllerInterface;
@@ -72,8 +73,9 @@ return function (ContainerBuilder $containerBuilder) {
         //##################
         //
         OnboardingControllerInterface::class => function (ContainerInterface $c) {
-            //$settings = $c->get(SettingsInterface::class);
-            return new OnboardingController();
+            $settings = $c->get(SettingsInterface::class);
+            $onboardingRepository = $c->get(OnboardingRepositoryInterface::class);
+            return new OnboardingController($onboardingRepository);
         },
         //
         //Profile
@@ -145,29 +147,6 @@ return function (ContainerBuilder $containerBuilder) {
             return new HealthzController();
         },
         //##################
-
-
-
-
-
-        
-        /*
-        StreamingControllerInterface ::class => function (ContainerInterface $c) {
-            //$liveStreamingSettings  = $c->get(SettingsInterface::class)->get('streamingLivekitSettings');
-            $StreamingRepository = $c->get(StreamingRepositoryInterface::class);
-            return new StreamingController($StreamingRepository);
-
-        },
-        */
-        //
-        //Guardian
-        /*
-        GuardianControllerInterface::class => function (ContainerInterface $c) {
-            $settings = $c->get(SettingsInterface::class);
-            $db = $settings->get('dbSettings');
-            return new GuardianController($db);
-        },
-        */
 
     ]);
 };
