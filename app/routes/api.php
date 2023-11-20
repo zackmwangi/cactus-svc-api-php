@@ -48,11 +48,15 @@ return function (App $app, Container $dependencyContainer) {
     $app->add($app->getContainer()->get(CustomHeaderMiddleware::class));
     $app->add($app->getContainer()->get(IpGeolocationMiddleware::class));
     //
+    //
     //Main entrypoint for all new visitors
+    //
+    //
     $app->group('/api/v1/authorize', function (RouteCollectorProxy $routeGroup) {
         //Open routes
         $routeGroup->post('/provider/{authProvider}', [$this->get(AuthorizationControllerInterface::class),'authorizeIdtoken']);
     })->add($app->getContainer()->get(AuthorizationInitMiddlewareInterface::class));
+    //
     //
     //Registrant-only routes
     $app->group('/api/v1/onboarding', function (RouteCollectorProxy $group) use($app){
@@ -131,7 +135,7 @@ return function (App $app, Container $dependencyContainer) {
 
         //####
         //Messages
-        $group->get('/messages/home', [$this->get(FeedControllerInterface::class),'getMessagesLanding']);
+        $group->get('/messages/home', [$this->get(MessagingControllerInterface::class),'getMessagesLanding']);
         //List messages
         //Send New message
         //Edit message

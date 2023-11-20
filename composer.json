@@ -16,7 +16,8 @@
         "cloudevents/sdk-php": "^1.0",
         "vlucas/phpdotenv": "^5.5",
         "ipinfo/ipinfo": "^3.1",
-        "agence104/livekit-server-sdk": "^1.1"
+        "agence104/livekit-server-sdk": "^1.1",
+        "ramsey/uuid": "^4.7"
     },
     "autoload": {
         "psr-4": {

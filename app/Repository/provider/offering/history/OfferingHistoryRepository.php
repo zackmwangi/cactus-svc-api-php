@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Repository\Provider\Offering;
+namespace App\Repository\Provider\Offering\History;
 
 use PDO;
 

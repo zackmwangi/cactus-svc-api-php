@@ -8,15 +8,29 @@ use Exception;
 
 class OnboardingRepository implements  OnboardingRepositoryInterface{
     private $dbConnection;
+    //private $authProvider;
+
+    private $onboardingRegistrantRepository;
+    private $onboardingOptionsRepository;
     
 
     public function __construct(PDO $dbConnection, bool $useRegistrationWhitelist = false){
         $this->dbConnection = $dbConnection;
+        //$this->authProvider = $authProvider;
+
     }
 
     public function getPDO(){
         return $this->dbConnection;
     }
+
+    public function getAuthProvider(){
+        //return $this->authProvider;
+    }
+
+
+
+
     //
     /*
     //###############

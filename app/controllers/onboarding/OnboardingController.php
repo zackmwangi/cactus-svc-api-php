@@ -15,7 +15,7 @@ class OnboardingController implements OnboardingControllerInterface
     //Registrant by Auth provider
     //Options
 
-    public function __construct( OnboardingRepository $onboardingRepository){
+    public function __construct(OnboardingRepository $onboardingRepository){
         $this->onboardingRepository = $onboardingRepository ;
     }
 

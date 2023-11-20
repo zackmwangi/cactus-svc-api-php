@@ -94,7 +94,12 @@ return function (ContainerBuilder $containerBuilder){
         AuthorizationRepositoryInterface::class => function (ContainerInterface $c) {
             $dbConnection = $c->get(SettingsInterface::class)->get('dbSettings')['dbConnection'];
             $dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return new AuthorizationRepository($dbConnection);
+            //
+            //$authProvider = "google";
+            return new AuthorizationRepository(
+                $dbConnection,
+                //$authProvider,
+            );
             
         },
         //

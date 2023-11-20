@@ -13,22 +13,40 @@ class AuthprofileGoogleRepository implements AuthprofileGoogleRepositoryInterfac
         $this->dbConnection = $dbConnection;
     }
 
-    public function getAuthprofileExistsById(){}
+    public function getAuthProfileForIdTokenPayload(array $validatedUserIdTokePayload){
+        $email = $validatedUserIdTokePayload['email'];
+        return $this->getAuthprofileRowByEmail($email);
+    }
 
-    public function getAuthprofileExistsByEmail(){}
+    public function getAuthprofileExistsById(String $id){}
 
-    public function getAuthprofileRowById(){}
+    public function getAuthprofileExistsByEmail(String $email){}
 
-    public function getAuthprofileRowByEmail(){}
+    public function getAuthprofileRowById(String $id){}
 
-    public function createAuthprofileResponseMapFromRow($authprofileEntryRow){}
+    //public function getAuthprofileRowById(){}
+
+    public function getAuthprofileRowByEmail(String $email){
+        $stmt = $this->dbConnection->prepare("SELECT * FROM auth_profile_google WHERE email = :email LIMIT 1");
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+        $data = $stmt->fetch();
+        return $data;
+    }
+
+    public function createAuthprofileResponseMapFromRow($authprofileEntryRow){
+        //return data
+        return false;
+    }
 
     public function updateLastLoginsById(
+        String $id
         //auth_profile
         //main identity table
     ){}
     
     public function updateLastLoginsByEmail(
+        String $email
         //auth_profile
         //main identity table
     ){}

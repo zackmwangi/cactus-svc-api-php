@@ -13,22 +13,26 @@ class AuthprofileAppleRepository implements AuthprofileAppleRepositoryInterface,
         $this->dbConnection = $dbConnection;
     }
 
-    public function getAuthprofileExistsById(){}
+    public function getAuthProfileForidTokenPayload(array $validatedUserIdTokePayload){}
 
-    public function getAuthprofileExistsByEmail(){}
+    public function getAuthprofileExistsById(String $id){}
 
-    public function getAuthprofileRowById(){}
+    public function getAuthprofileExistsByEmail(String $emailAddress){}
 
-    public function getAuthprofileRowByEmail(){}
+    public function getAuthprofileRowById(String $id){}
+
+    public function getAuthprofileRowByEmail(String $emailAddress){}
 
     public function createAuthprofileResponseMapFromRow($authprofileEntryRow){}
 
     public function updateLastLoginsById(
+        String $id
         //auth_profile
         //main identity table
     ){}
     
     public function updateLastLoginsByEmail(
+        String $emailAddress
         //auth_profile
         //main identity table
     ){}

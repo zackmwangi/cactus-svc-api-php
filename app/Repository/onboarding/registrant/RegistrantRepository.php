@@ -10,15 +10,36 @@ class RegistrantRepository implements  RegistrantRepositoryInterface
 {
     private $dbConnection;
     //private $useRegistrationCountryWhitelist;
+    //
     private $useRegistrationEmailWhitelist;
-    
+    private $authProvider;
 
-    public function __construct(PDO $dbConnection, bool $useRegistrationEmailWhitelist=false){
+    public function __construct(PDO $dbConnection, String $authProvider, bool $useRegistrationEmailWhitelist=false){
         $this->dbConnection = $dbConnection;
         //
         //TODO: Add country whitelist
         //$this->useRegistrationCountryWhitelist = $useRegistrationCountryWhitelist;
         $this->useRegistrationEmailWhitelist = $useRegistrationEmailWhitelist;
+
+        //##############
+        /*
+        switch($this->authProvider){
+            case 'google':
+            //$this->authProviderClass = new Auth
+
+            //break;
+            case 'apple';
+            case 'facebook';
+            case 'linkedin';
+            case 'github';
+            case 'microsoft';
+            case 'x';
+            default:
+            //return $response->withStatus(400);
+            break;
+        }
+        */
+        //##############
     }
 
     public function getPDO(){

@@ -22,7 +22,7 @@ class AuthorizationInitMiddleware implements AuthorizationInitMiddlewareInterfac
         if (!($request->hasHeader('X-CLIENT-INIT-ID-TOKEN')&&$request->hasHeader('X-CLIENT-TYPE'))) {
             //BAD REQUEST
             $responseFactory = new \Nyholm\Psr7\Factory\Psr17Factory();
-            return $responseFactory->createResponse(401);
+            return $responseFactory->createResponse(400);
         }
         
         $response = $handler->handle($request);
