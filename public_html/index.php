@@ -9,7 +9,13 @@ error_reporting(E_ALL);
 //
 require __DIR__ . '/../vendor/autoload.php';
 
+//
+include(__DIR__ . '/../app/settings/SettingsInterface.php');
+include(__DIR__ . '/../app/settings/Settings.php');
+//
+
 use App\Settings\SettingsInterface;
+use App\Settings\Settings;
 
 use DI\ContainerBuilder;
 use Slim\Factory\AppFactory;
@@ -26,24 +32,23 @@ $containerBuilder = new ContainerBuilder();
 //#############################
 
 // Set up settings
-//$settingsClass = require __DIR__ . '/../app/settings/Settings.php';
-$settings = require __DIR__ . '/../app/config/settings.php';
+$settings = require __DIR__ . '/../app/config/Settings.php';
 $settings($containerBuilder);
 
 // Set up Dependencies
-$dependencies = require __DIR__ . '/../app/config/dependencies.php'; 
+$dependencies = require __DIR__ . '/../app/config/Dependencies.php'; 
 $dependencies($containerBuilder);
 
 // Register  Repositories
-$repositories = require __DIR__ . '/../app/config/repositories.php';
+$repositories = require __DIR__ . '/../app/config/Repositories.php';
 $repositories($containerBuilder);
 
 // Register Middleware
-$middleware = require __DIR__ . '/../app/config/middleware.php';
+$middleware = require __DIR__ . '/../app/config/Middleware.php';
 $middleware($containerBuilder);
 
 // Register Controllers
-$controllers = require __DIR__ . '/../app/config/controllers.php';
+$controllers = require __DIR__ . '/../app/config/Controllers.php';
 $controllers($containerBuilder);
 
 //

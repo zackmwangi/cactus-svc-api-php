@@ -22,14 +22,18 @@ use App\Middleware\Authorization\AuthorizationMiddleware;
 use App\Middleware\Authorization\OnboardingAuthMiddlewareInterface;
 use App\Middleware\Authorization\OnboardingAuthMiddleware;
 
+use App\Middleware\CustomHeader\CustomHeaderMiddlewareInterface;
 use App\Middleware\CustomHeader\CustomHeaderMiddleware;
+
 use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
+//
+use App\Middleware\RequestFilter\RequestFilterMiddlewareInterface;
 use App\Middleware\RequestFilter\RequestFilterMiddleware;
 
 
 return function (ContainerBuilder $containerBuilder) {
     $containerBuilder->addDefinitions([
-        RequestFilterMiddleware::class => function (ContainerInterface $c) {
+        RequestFilterMiddlewareInterface::class => function (ContainerInterface $c) {
             return new RequestFilterMiddleware();
         },
         IpGeolocationMiddleware::class => function (ContainerInterface $c) {
@@ -52,7 +56,7 @@ return function (ContainerBuilder $containerBuilder) {
             $jwtSettings = $settings->get('jwtSettings');
             return new AuthorizationMiddleware($jwtSettings);
         },
-        CustomHeaderMiddleware::class => function (ContainerInterface $c) {
+        CustomHeaderMiddlewareInterface::class => function (ContainerInterface $c) {
             return new CustomHeaderMiddleware();
         },
     ]);
