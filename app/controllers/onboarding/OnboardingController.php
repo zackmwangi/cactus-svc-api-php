@@ -11,12 +11,12 @@ use App\Repository\Onboarding\OnboardingRepository;
 
 class OnboardingController implements OnboardingControllerInterface
 {
-    private $onboardingRepository ;
+    //private $onboardingRepository ;
     //Registrant by Auth provider
     //Options
 
-    public function __construct(OnboardingRepository $onboardingRepository){
-        $this->onboardingRepository = $onboardingRepository ;
+    public function __construct(){
+        //$this->onboardingRepository = $onboardingRepository ;
     }
 
     //Ondemand listing for empathy

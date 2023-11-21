@@ -30,7 +30,10 @@ use App\Controllers\Healthz\HealthzControllerInterface;
 use App\Middleware\Authorization\AuthorizationInitMiddlewareInterface;
 use App\Middleware\Authorization\AuthorizationMiddlewareInterface;
 use App\Middleware\Authorization\OnboardingAuthMiddlewareInterface;
+//
+use App\Middleware\RequestFilter\RequestFilterMiddlewareInterface;
 use App\Middleware\RequestFilter\RequestFilterMiddleware;
+//
 use App\Middleware\CustomHeader\CustomHeaderMiddleware;
 use App\Middleware\IpGeolocation\IpGeolocationMiddleware;
 //
@@ -44,9 +47,10 @@ use DI\Container;
 
 return function (App $app, Container $dependencyContainer) {
 
-    $app->add($app->getContainer()->get(RequestFilterMiddleware::class));
+    
     $app->add($app->getContainer()->get(CustomHeaderMiddleware::class));
     $app->add($app->getContainer()->get(IpGeolocationMiddleware::class));
+    $app->add($app->getContainer()->get(RequestFilterMiddleware::class));
     //
     //
     //Main entrypoint for all new visitors

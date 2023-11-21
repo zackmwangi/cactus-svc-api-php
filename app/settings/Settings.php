@@ -19,6 +19,7 @@ class Settings implements SettingsInterface
      */
     public function get(string $key = '')
     {
+
         /*
         echo 'Finding key ' . $key;
         echo '----------------------------------------------------------------';
@@ -26,5 +27,7 @@ class Settings implements SettingsInterface
         echo '----------------------------------------------------------------';
         */
         return (empty($key)) ? $this->settings : $this->settings[$key];
+        
     }
+    //
 }

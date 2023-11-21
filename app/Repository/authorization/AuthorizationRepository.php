@@ -253,11 +253,11 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         //$responseMapData[''] = '';
         //Other defaults
         //$userDataPayload['inferredGender'] = $this->getInferredGender($firstname, $lastname, $this->geoLocationInfo->country );
-        $userDataPayload['inferredGender'] = '';
-        $userDataPayload['defaultGender'] = $this->defaultGender;
+        $responseMapData['inferredGender'] = '';
+        $responseMapData['defaultGender'] = $this->defaultGender;
         //
-        $userDataPayload['birthdayStart'] = $this->bithdayStartDate; //today-18y
-        $userDataPayload['birthdayEnd'] = $this->bithdayStopDate;//today-110y
+        $responseMapData['birthdayStart'] = $this->bithdayStartDate; //today-18y
+        $responseMapData['birthdayEnd'] = $this->bithdayStopDate;//today-110y
 
         //######################################################################################
         //######################################################################################
@@ -435,84 +435,7 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         
     
         
-       //
-       //
-        //##################################
-        /*
-        //HOBBY
-
-                    //
-                    //###################################################################################
-                    // Simulate
-                    //Activity
-                    //$activityPayloadX1 = [];
-
-                    $activityPayloadX1['uuid'] = '9820d254-8109-11ee-8fd4-67bd7e40c726';
-                    $activityPayloadX1['name'] = 'Crocheting';
-
-                    $activityPayloadX2['uuid'] = '374ebc2e-810a-11ee-8fd4-67bd7e40c726';
-                    $activityPayloadX2['name'] = 'Roasting & Barbecue';
-
-
-                    $subcatPayloadX1['uuid'] = 'a96bec90-809d-11ee-8fd4-67bd7e40c726';
-                    $subcatPayloadX1['name'] = 'Clothing';
-
-                    $subcatPayloadX2['uuid'] = 'ab35cda2-809d-11ee-8fd4-67bd7e40c726';
-                    $subcatPayloadX2['name'] = 'Cooking';
-                    //#####################################
-                    //
-                    $catPayloadX1['uuid'] = '50da5550-809b-11ee-8fd4-67bd7e40c726';
-                    $catPayloadX1['name'] = 'Make & Create';
-                    $catPayloadX1['popular_in_cat'] = [
-                        $activityPayloadX1,
-                        $activityPayloadX2
-                    ];
-                    $catPayloadX1['subcats'] = [
-                        $subcatPayloadX1,
-                        $subcatPayloadX2
-                    ];
-                    //
-                    //
-                    $supercatUuid = '4bad52c6-8118-11ee-8fd4-67bd7e40c726';
-                    $supercatName = 'Hobbies & Interests';
-                    $supercatLandingHeaderText = 'What hobbies and interests do they enjoy?';
-                    $supercatLandingDescriptorText = '';
-                    $supercatHintText = ' Search hobbies ';
-                    $supercatHeaderTextAll = 'Popular in '.$supercatName;
-                    $supercatHeaderTextCats = 'Popular hobbies by category';
-                    $supercatPopularAll = [
-                        $activityPayloadX1,
-                        $activityPayloadX2
-                    ];
-                    $supercatPopularCats = [
-                        //######
-                        $catPayloadX1,
-
-                        //######
-                    ];
-                    $supercatMaxSelections = 5;
-                    //
-                    //#####################################
-                    //
-                    $supercatPayload['uuid'] = $supercatUuid;
-                    $supercatPayload['name'] = $supercatName;
-                    //
-                    $supercatPayload['supercatLandingHeaderText'] = $supercatLandingHeaderText;
-                    $supercatPayload['supercatLandingDescriptorText'] =  $supercatLandingDescriptorText;
-                    //
-                    $supercatPayload['hint_text'] = $supercatHintText;
-                    $supercatPayload['header_text_popular_all'] = $supercatHeaderTextAll;
-                    $supercatPayload['header_text_popular_cats'] = $supercatHeaderTextCats;
-                    $supercatPayload['supercatMaxSelections'] = $supercatMaxSelections;
-                    $supercatPayload['popular_in_all'] = $supercatPopularAll;
-                    $supercatPayload['popular_in_cats'] = $supercatPopularCats;
-                    
-
-        */
-        //###################################################################################
-
-                    
-        
+ 
         //##################################
         
         //$searchDefaultsKidPayload= [
@@ -529,39 +452,4 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         return $responseMapData;
 
     }
-
-    //
-    //######################
-    //
-    /*
-    //Existing user
-    public function getAuthProfileForProviderAndTokenId($provider,$tokenId){
-        //return
-        //Existing user profile
-        //or
-        //Registrant profile for new registration
-    }
-    //
-    public function getAuthProfileForTokenIdGoogle($tokenId){
-        
-    }
-    //
-    public function getAuthProfileForTokenIdApple($tokenId){}
-    //
-    //public function getAuthProfileForTokenIdFacebook($tokenId){}
-
-    //New Registrant
-    public function getRegistrantAuthProfileForProviderAndTokenId($provider,$tokenId){}
-
-    public function getRegistrantAuthProfileForTokenIdGoogle($tokenId){}
-
-    public function getRegistrantAuthProfileForTokenIdApple($tokenId){}
-
-    //public function getRegistrantAuthProfileForTokenIdFacebook($tokenId){}
-    //
-    //
-    */
-
-    
-    
 }

@@ -73,9 +73,9 @@ return function (ContainerBuilder $containerBuilder) {
         //##################
         //
         OnboardingControllerInterface::class => function (ContainerInterface $c) {
-            $settings = $c->get(SettingsInterface::class);
-            $onboardingRepository = $c->get(OnboardingRepositoryInterface::class);
-            return new OnboardingController($onboardingRepository);
+            //$settings = $c->get(SettingsInterface::class);
+            //$onboardingRepository = $c->get(OnboardingRepositoryInterface::class);
+            return new OnboardingController();
         },
         //
         //Profile

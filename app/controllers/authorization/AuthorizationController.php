@@ -267,7 +267,7 @@ class AuthorizationController implements AuthorizationControllerInterface
             else
             {
                 //fresh registrant
-                error_log("Doing freesh registration for ".$validatedUserIdTokepayload["email"]);
+                error_log("Doing fresh registration for ".$validatedUserIdTokepayload["email"]);
                 //
                 //check blacklist
                 //

@@ -130,6 +130,7 @@ return function (ContainerBuilder $containerBuilder){
         //
         //###############
         //
+        /*
         OnboardingRepositoryInterface::class => function (ContainerInterface $c) {
             $dbConnection = $c->get(SettingsInterface::class)->get('dbSettings')['dbConnection'];
             $dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -141,6 +142,7 @@ return function (ContainerBuilder $containerBuilder){
             $dbConnection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return new RegistrantRepository($dbConnection);
         },
+        */
         /*
         RegistrantGoogleRepositoryInterface::class => function (ContainerInterface $c) {
             $dbConnection = $c->get(SettingsInterface::class)->get('dbSettings')['dbConnection'];
