@@ -66,10 +66,25 @@ return function (App $app, Container $dependencyContainer) {
     $app->group('/api/v1/onboarding', function (RouteCollectorProxy $group) use($app){
         //supercat/?terms
         //Execute a search
-        $group->get('/activities/search/supercat/{id}', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercat']);
+        //$group->get('/activities/search/supercat/{id}', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercat']);
+        //$group->get('/activities/search', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercat']);
+        //
+        //
+        $group->post('/activities/search/supercat/hobby', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatHobby']);
+        $group->post('/activities/search/supercat/sport', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatSport']);
+        $group->post('/activities/search/supercat/topic', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatTopic']);
+        $group->post('/activities/search/supercat/career', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatCareer']);
+        $group->post('/activities/search/supercat/charity', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatCharity']);
+        //
+        //get popular
+        $group->post('/popularactivities/kid', [$this->get(OnboardingControllerInterface::class),'getPopularActivitiesForKid']);
+        $group->post('/popularactivities/guardian', [$this->get(OnboardingControllerInterface::class),'getPopularActivitiesForGuardian']);
+
+
         //list activities by cat and subcat
-        $group->get('/activities/list/cat/{id}', [$this->get(OnboardingControllerInterface::class),'getActivitiesInCcat']);
-        $group->get('/activities/list/subcat/{id}', [$this->get(OnboardingControllerInterface::class),'getActivitiesInSubcat']);
+        $group->post('/activities/list/cat', [$this->get(OnboardingControllerInterface::class),'getActivitiesInCat']);
+        $group->post('/activities/list/subcat', [$this->get(OnboardingControllerInterface::class),'getActivitiesInSubcat']);
+        //
         //Activity info
         //$group->get('/activity/info/{id}', [$this->get(GOnboardingControllerInterface::class),'getActivityInfoById']);
 

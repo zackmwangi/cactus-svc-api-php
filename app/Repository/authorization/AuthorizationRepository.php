@@ -450,6 +450,5 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $responseMapData['searchDefaultsKid']['supercats'] = $searchDefaultsKidPayload;
         //
         return $responseMapData;
-
     }
 }
