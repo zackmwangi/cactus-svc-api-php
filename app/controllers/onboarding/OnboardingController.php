@@ -40,18 +40,21 @@ class OnboardingController implements OnboardingControllerInterface
     //Hooby
     public function searchActivitiesInSupercatHobby(Request $request, Response $response, array $args){
         //
-        
         //
         //$allPostVars = $request->$_POST;
-        //$allPostVars = (array)$request->getParsedBody();
+        $allPostVars = (array)$request->getParsedBody();
         //$allPostVars = $request->post();
         //
-        //var_dump($allPostVars);
+        //die(var_dump($allPostVars));
+        //die(var_dump($_POST['searchType']));
         //
         //error_log($allPostVars['searchType']);
         //error_log($allPostVars['searchValue']);
-
+        //
+        //
         $topResults = [];
+        $relevantResults = [];
+        //
         //
         for($i=1;$i<=100;$i++){
             $item = [
@@ -61,7 +64,6 @@ class OnboardingController implements OnboardingControllerInterface
             $topResults[] = $item;
 
         }
-
         //
         //
         /*
@@ -81,7 +83,7 @@ class OnboardingController implements OnboardingControllerInterface
         ];
         */
        $searchResponseMap["topResults"] = $topResults;
-        $searchResponseMap["relevantResults"] = [];
+        $searchResponseMap["relevantResults"] = $relevantResults;
 
         //
         $responsePayload = json_encode($searchResponseMap);

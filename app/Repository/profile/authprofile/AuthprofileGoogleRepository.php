@@ -27,7 +27,7 @@ class AuthprofileGoogleRepository implements AuthprofileGoogleRepositoryInterfac
     //public function getAuthprofileRowById(){}
 
     public function getAuthprofileRowByEmail(String $email){
-        $stmt = $this->dbConnection->prepare("SELECT * FROM auth_profile_google WHERE email = :email LIMIT 1");
+        $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_authprofile_google WHERE email = :email LIMIT 1");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         $data = $stmt->fetch();

@@ -34,7 +34,7 @@ class RegistrantGoogleRepository implements  RegistrantGoogleRepositoryInterface
         //error_log("registrant UUID is: ".$registrantUuid);
 
         //
-        $sql = "INSERT INTO registrant_flyby_google (fullname, email, flyby_time, reminder_1_schedule_time, reminder_2_schedule_time, valid_until_time, geoinfo_ip_address, geoinfo_country_code, geoinfo_country_name, geoinfo_city, geoinfo_loc, geoinfo_lat, geoinfo_lng, created_time) VALUES (
+        $sql = "INSERT INTO nacha_core_registrant_flyby_google (fullname, email, flyby_time, reminder_1_schedule_time, reminder_2_schedule_time, valid_until_time, geoinfo_ip_address, geoinfo_country_code, geoinfo_country_name, geoinfo_city, geoinfo_loc, geoinfo_lat, geoinfo_lng, created_time) VALUES (
             :fullname, :email, :flyby_time, :reminder_1_schedule_time, :reminder_2_schedule_time, :valid_until_time, :geoinfo_ip_address, :geoinfo_country_code, :geoinfo_country_name, :geoinfo_city, :geoinfo_loc, :geoinfo_lat, :geoinfo_lng, :created_time )";
         //
         $stmt = $this->dbConnection->prepare($sql);
@@ -73,7 +73,7 @@ class RegistrantGoogleRepository implements  RegistrantGoogleRepositoryInterface
         
         try{
         //
-        $sql = "UPDATE registrant_flyby_google SET ";
+        $sql = "UPDATE nacha_core_registrant_flyby_google SET ";
         $sql .= "flyby_time=:flyby_time,";
         $sql .= "flyby_count=:flyby_count,";
 
@@ -122,7 +122,7 @@ class RegistrantGoogleRepository implements  RegistrantGoogleRepositoryInterface
     public function getRegistrantRowById(String $id){}
 
     public function getRegistrantRowByEmail(String $email){
-        $stmt = $this->dbConnection->prepare("SELECT * FROM registrant_flyby_google WHERE email = :email LIMIT 1");
+        $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_registrant_flyby_google WHERE email = :email LIMIT 1");
         $stmt->bindParam(':email', $email);
         $stmt->execute();
         $data = $stmt->fetch();
