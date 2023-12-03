@@ -80,8 +80,6 @@ class AuthorizationController implements AuthorizationControllerInterface
     }
 
     public function authorizeIdtoken(Request $request, Response $response, array $args){
-        //Check Token validity
-        //read details from clientId Header
         
 
         $clientIdTokenArray = $request->getHeader('X-CLIENT-INIT-ID-TOKEN');
@@ -89,6 +87,8 @@ class AuthorizationController implements AuthorizationControllerInterface
 
         $clientTypeArray = $request->getHeader('X-CLIENT-TYPE');
         $clientType = trim($clientTypeArray[0]);
+
+        error_log($clientType);
 
         $validatedUserIdTokepayload = $this->validateIdToken($clientIdToken);
         //
@@ -105,6 +105,7 @@ class AuthorizationController implements AuthorizationControllerInterface
         $this->validatedUserIdTokepayload = $validatedUserIdTokepayload;
         //
         $authProvider = $args['authProvider'];
+        
         //
         //$onboardingRepository = OnboardingRepository();
         $authProviderRepo = $this->authorizationRepository->withProvider($authProvider, $this->jwtSettings);

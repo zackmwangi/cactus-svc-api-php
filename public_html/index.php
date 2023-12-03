@@ -71,6 +71,9 @@ include(__DIR__ . '/../app/repository/messaging/MessagingRepository.php');
 include(__DIR__ . '/../app/repository/notifications/NotificationsRepositoryInterface.php');
 include(__DIR__ . '/../app/repository/notifications/NotificationsRepository.php');
 
+include(__DIR__ . '/../app/repository/occupations/OccupationsRepositoryInterface.php');
+include(__DIR__ . '/../app/repository/occupations/OccupationsRepository.php');
+
 include(__DIR__ . '/../app/repository/onboarding/options/OnboardingOptionsRepositoryInterface.php');
 include(__DIR__ . '/../app/repository/onboarding/options/OnboardingOptionsRepository.php');
 
