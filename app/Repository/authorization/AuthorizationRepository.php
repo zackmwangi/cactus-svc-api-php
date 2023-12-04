@@ -39,8 +39,11 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
     private $defaultLocationCountryCode;
     private $defaultLocationLoc;
 
-    private $bithdayStartDate;
-    private $bithdayStopDate;
+    private $birthdayStartDate;
+    private $birthdayStopDate;
+
+    private $birthdayKidStartDate;
+    private $birthdayKidStopDate;
 
     private $defaultGender;
     private $defaultAccountType;
@@ -59,8 +62,11 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $this->defaultLocationCountryCode = 'KE';
         $this->defaultLocationLoc = '-1.286389, 36.817223';
         //
-        $this->bithdayStartDate = date("Y-m-d",strtotime("-40150 days"));
-        $this->bithdayStopDate = date("Y-m-d",strtotime("-6575 days"));
+        $this->birthdayStartDate = date("Y-m-d",strtotime("-40150 days"));
+        $this->birthdayStopDate = date("Y-m-d",strtotime("-6575 days"));
+        //
+        $this->birthdayKidStartDate = date("Y-m-d",strtotime("-6570 days"));
+        $this->birthdayKidStopDate = date("Y-m-d",strtotime("-729 days"));
         //
         $this->defaultGender = 'F';
         $this->defaultAccountType = 'GUARDIAN';
@@ -266,8 +272,11 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $responseMapData['inferredGender'] = '';
         $responseMapData['defaultGender'] = $this->defaultGender;
         //
-        $responseMapData['birthdayStart'] = $this->bithdayStartDate; //today-18y
-        $responseMapData['birthdayEnd'] = $this->bithdayStopDate;//today-110y
+        $responseMapData['birthdayStart'] = $this->birthdayStartDate; //today-18y
+        $responseMapData['birthdayEnd'] = $this->birthdayStopDate;//today-110y
+        //
+        $responseMapData['birthdayKidStart'] = $this->birthdayKidStartDate; //today-18y
+        $responseMapData['birthdayKidEnd'] = $this->birthdayKidStopDate;//today-110y
 
         
         //######################################################################################
