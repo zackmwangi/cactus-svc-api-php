@@ -259,7 +259,7 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $responseMapData['geoInfoLoc'] = $flybyData['geoinfo_loc'];
         //
         $responseMapData['defaultLocationCountryCode'] = $this->defaultLocationCountryCode;//$flybyData['geoinfo_city'];
-        $responseMapData['defaultLocationLoc'] = $this->defaultLocationCountryCode;//$flybyData['geoinfo_loc'];
+        $responseMapData['defaultLocationLoc'] = $this->defaultLocationLoc;//$flybyData['geoinfo_loc'];
         //$responseMapData[''] = '';
         //Other defaults
         //$userDataPayload['inferredGender'] = $this->getInferredGender($firstname, $lastname, $this->geoLocationInfo->country );
