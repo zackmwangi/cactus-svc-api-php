@@ -37,6 +37,154 @@ class OnboardingController implements OnboardingControllerInterface
         //
     }
 
+    public function getActivityOptions (Request $request, Response $response, array $args){
+        //sleep(1);
+        //
+        //
+        // age
+        // gender
+        // location
+        //
+        //
+
+        $topResults = [];
+
+        //
+        $supercatResultsHobby = [];
+        //Hobby
+            $supercatResultsHobby['isAccess'] = false;
+            //id
+            $supercatResultsHobby['uuid'] = '4bad52c6-8118-11ee-8fd4-67bd7e40c726';
+            //name
+            $supercatResultsHobby['name'] = 'Hobbies and interests';
+            //description
+            //$supercatResultsHobby['description'] = '';
+
+
+            //Landing Heading
+            $supercatResultsHobby['supercatLandingHeaderText'] = '';
+            //Landing SubHeading
+            $supercatResultsHobby['supercatLandingDescriptorText'] = '';
+            //
+            //
+            //Search Explainer header
+            $supercatResultsHobby['searchExplainerHeaderText'] = 'Adapted for toddlers';
+            //Search Explainer subHeader
+            $supercatResultsHobby['searchExplainerDescriptorText'] = 'These activities are labelled as suitable for toddlers.';
+            //
+            //
+            $supercatResultsHobby['search_hint_text'] = 'Find activities';
+            $supercatResultsHobby['hint_text'] = 'Find activities';
+            //Search Heading Featured
+            $supercatResultsHobby['header_text_popular_all'] = 'Featured for toddlers';
+            //Search SubHeading Categories
+            $supercatResultsHobby['header_text_popular_cats'] = 'Popular for younglings';
+            //
+            //
+            //Options
+                //CatFeatured
+                $pop1 = array();
+                //
+                $pop1['uuid'] = 'x1';
+                $pop1['name'] = 'Water play';
+                $pop2['uuid'] = 'x2';
+                $pop2['name'] = 'Roll and Crawl';
+                $pop3['uuid'] = 'x3';
+                $pop3['name'] = 'Visual - contrast';
+                //
+                $supercatResultsHobby['popular_in_all'] = [
+                    $pop1,
+                    $pop2
+                ];
+                //Cat Others Featured
+                //######################
+                $pop4['uuid'] = 'x4';
+                $pop4['name'] = 'Sights and visual';
+                $pop5['uuid'] = 'x5';
+                $pop5['name'] = 'Touch and feel';
+                $pop6['uuid'] = 'x6';
+                $pop6['name'] = 'Sound and hearing';
+                //
+                //
+                $cat1 = array();
+                $cat1['uuid'] = 'c1';
+                $cat1['name'] = 'Sensory play';
+                $cat1['popular_in_cat'] = [
+                    $pop4,
+                    $pop5,
+                    $pop6
+                ];
+                //######################
+                $pop7['uuid'] = 'x7';
+                $pop7['name'] = 'Playful laughter';
+
+                $pop8['uuid'] = 'x8';
+                $pop8['name'] = 'Skin-to-skin contact';
+
+                $pop9['uuid'] = 'x9';
+                $pop9['name'] = 'Giggles and baby talk';
+                //
+                //
+                $cat2 = array();
+                $cat2['uuid'] = 'c2';
+                $cat2['name'] = 'Bonding and Connection';
+                $cat2['popular_in_cat'] = [
+                    $pop7,
+                    $pop8,
+                    $pop9
+                ];
+
+                //######################
+
+
+                $supercatResultsHobby['popular_in_cats'] = [$cat1,$cat2];
+                    //Subcats
+            //
+            //max allowed K
+            $supercatResultsHobby['supercatMaxSelections'] = 5;
+            //min allowed K
+            $supercatResultsHobby['supercatMinSelections'] = 1;
+            
+            //min allowed G
+            //$supercatResultsHobby['supercatMinSelectionsG'] = '';
+            //max allowed G
+            //$supercatResultsHobby['supercatMaxSelectionsG'] = '';
+
+
+
+        //Sport
+        $supercatResultsSport = [];
+        $supercatResultsSport['isAccess'] = false;
+
+        //Career
+        $supercatResultsCareer = [];
+        $supercatResultsCareer['isAccess'] = false;
+
+        //Charity
+        $supercatResultsCharity = [];
+        $supercatResultsCharity['isAccess'] = false;
+
+        //Accessibility
+        $supercatResultsAccessibility = [];
+        $supercatResultsAccessibility['isAccess'] = true;
+
+        //
+        $topResults['4bad52c6-8118-11ee-8fd4-67bd7e40c726'] = $supercatResultsHobby;
+        /*
+        $topResults['56280bba-8118-11ee-8fd4-67bd7e40c726'] = $supercatResultsSport;
+        $topResults['6a26cb1a-8118-11ee-8fd4-67bd7e40c726'] = $supercatResultsCareer;
+        $topResults['70f2e28a-8118-11ee-8fd4-67bd7e40c726'] = $supercatResultsCharity ;
+        $topResults['9eae9cb8-8b6e-11ee-9d9c-bde544a2630a'] = $supercatResultsAccessibility;
+        */
+        //
+        $optionsResponseMap['topResults'] = $topResults;
+        $responsePayload = json_encode($optionsResponseMap);
+        $response->getBody()->write($responsePayload);
+        //
+        return $response->withStatus(200);
+        //return $response->withStatus(400);
+    }
+
     //Hooby
     public function searchActivitiesInSupercatHobby(Request $request, Response $response, array $args){
         //

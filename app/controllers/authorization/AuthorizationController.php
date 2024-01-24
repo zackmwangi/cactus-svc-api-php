@@ -95,6 +95,7 @@ class AuthorizationController implements AuthorizationControllerInterface
         if($validatedUserIdTokepayload == false) {
             //
             $errorMessage = "invalid user id token: ";
+            error_log($errorMessage);
             //
             //error_log($errorMessage.$clientIdToken);
             //
@@ -105,6 +106,10 @@ class AuthorizationController implements AuthorizationControllerInterface
         $this->validatedUserIdTokepayload = $validatedUserIdTokepayload;
         //
         $authProvider = $args['authProvider'];
+        error_log($authProvider );
+        //
+        //TODO: Mode the above code to middleware
+        //####################################################################################################
         
         //
         //$onboardingRepository = OnboardingRepository();
@@ -123,8 +128,15 @@ class AuthorizationController implements AuthorizationControllerInterface
         $geoInfoLng = 0;
         //
          $geolocation = $request->getAttribute('geolocation');
-         if(($geolocation!=null || $geolocation!=='') && ($geolocation->ip !='127.0.0.1')){
-             if($geolocation->ip !='127.0.0.1'){
+         //
+         if( ($geolocation!=null || $geolocation!=='') && 
+         ($geolocation->ip != '127.0.0.1') && 
+         ($geolocation->ip !='192.168.30.59') &&
+         ($geolocation->ip !='192.168.133.209') &&
+         ($geolocation->ip !='172.20.10.7') &&
+         ($geolocation->ip !='172.20.10.8') &&
+         ($geolocation->ip !='192.168.124.164') ){
+             //if($geolocation->ip !='127.0.0.1'){
                  $geoInfoIpAddress = $geolocation->ip;
                  $geoInfoCountryCode = $geolocation->country;
                  $geoInfoCountryName = $geolocation->country_name;
@@ -132,7 +144,7 @@ class AuthorizationController implements AuthorizationControllerInterface
                  $geoInfoLoc = $geolocation->loc;
                  $geoInfoLat = $geolocation->latitude;
                  $geoInfoLng = $geolocation->longitude;
-             }
+             //}
          }
          //#########
          $mygeoLocationInfo = new stdClass();
@@ -348,14 +360,5 @@ class AuthorizationController implements AuthorizationControllerInterface
 
         
     }
-
-    
-    //
-    /*
-    private function generateRegistrantProfileResponseMap(){}
-
-    private function generateAuthprofileResponseMap(){}
-    */
-
     
 }

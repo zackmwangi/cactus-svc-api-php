@@ -57,12 +57,18 @@ class AccessibilityRepository implements AccessibilityRepositoryInterface{
         return $data;
     }
 
-    public function getAccessibilitySupercatInfo(){
+    public function getKidAccessibilitySupercatInfo(){
+        return $this->getAccessibilitySupercatInfo(1);
+    }
+
+    public function getAccessibilitySupercatInfo($showKidSuitableOnly=0){
         $visibleValue = 1;
         //$show_kid = 1;
-
-            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_ax_supercategory_by_uuid WHERE visible = :visible LIMIT 1");
-        
+        if($showKidSuitableOnly == 1){
+            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_ax_supercategory_by_uuid WHERE visible = :visible AND show_kid = 1 LIMIT 1");
+        }else{
+            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_ax_supercategory_by_uuid WHERE visible = :visible AND show_guardian = 1 LIMIT 1");
+        }
         $stmt->bindParam(':visible', $visibleValue);
         //$stmt->bindParam(':show_kid',$show_kid);
         $stmt->execute();
@@ -77,32 +83,31 @@ class AccessibilityRepository implements AccessibilityRepositoryInterface{
     public function getAccessCategories($showKidSuitableOnly=0){
         //
         $visibleValue = 1;
-        $show_kid = 1;
+        //$show_kid = 1;
 
         if($showKidSuitableOnly == 1){
-            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_ax_category WHERE visible = :visible AND show_kid = :show_kid LIMIT 20");
+            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_ax_category WHERE visible = :visible AND show_kid = 1 LIMIT 20");
         }
         else{
-            //include adult stuff
-            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_ax_category WHERE visible = :visible LIMIT 20");
+            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_ax_category WHERE visible = :visible AND show_guardian = 1 LIMIT 20");
         }
 
         //$stmt->bindParam(':supercat_uuid', $supercategoryId);
         $stmt->bindParam(':visible', $visibleValue);
-        $stmt->bindParam(':show_kid',$show_kid);
+        //$stmt->bindParam(':show_kid',$show_kid);
         $stmt->execute();
         $data = $stmt->fetchAll();
         return $data;
     }
 
     public function getKidAccessNeedsInCategory($categoryId){
-        return $this->getAccessNeedsInCategory(1);
+        return $this->getAccessNeedsInCategory($categoryId,1);
     }
 
-    public function getAccessNeedsInCategory($categoryId,$showKidSuitableOnly=1){
+    public function getAccessNeedsInCategory($categoryId,$showKidSuitableOnly=0){
         //
-        $visibleValue = 1;
-        $show_kid = 1;
+        //$visibleValue = 1;
+        //$show_kid = 1;
 
         if($showKidSuitableOnly == 1){}else{}
 

@@ -66,7 +66,8 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $this->birthdayStopDate = date("Y-m-d",strtotime("-6575 days"));
         //
         $this->birthdayKidStartDate = date("Y-m-d",strtotime("-6570 days"));
-        $this->birthdayKidStopDate = date("Y-m-d",strtotime("-729 days"));
+        //$this->birthdayKidStopDate = date("Y-m-d",strtotime("-365 days"));
+        $this->birthdayKidStopDate = date("Y-m-d",strtotime("-180 days"));
         //
         $this->defaultGender = 'F';
         $this->defaultAccountType = 'GUARDIAN';
@@ -282,8 +283,10 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         //######################################################################################
         // Activity categories
         //
-        //$searchDefaultsGuardianPayload = array();
+        $searchDefaultsGuardianPayload = array();
         $searchDefaultsKidPayload = array();
+        //
+        $accessDefaultsGuardianPayload = array();
         $accessDefaultsKidPayload = array();
         //
         //##########
@@ -304,7 +307,7 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
                 $supercatPayload['name'] = $supercategory['name'];
                 $supercatPayload['description'] = $supercategory['description'];
                 //
-                $supercatPayload['supercatLandingHeaderText'] = $supercategory['landing_heading'];
+                $supercatPayload['supercatLandingHeaderText'] = $supercategory['landing_heading_kid'];
                 $supercatPayload['supercatLandingDescriptorText'] = $supercategory['landing_descriptor'];
                 //
                 $supercatPayload['hint_text'] = $supercategory['search_hint'];
@@ -503,6 +506,220 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         }
 
         //##########
+        //
+        $guardianSupercategories = $onboardingOptionsRepo->getSupercategories();
+        if($guardianSupercategories != false){
+            
+            $occupationsRepo = new OccupationsRepository($this->dbConnection);
+            
+            foreach($guardianSupercategories as $supercategory){
+
+                //var_dump($supercategory);
+
+                $supercatPayload = [];
+                $supercatPayload['uuid'] =  $supercategory['uuid'];
+                $supercatPayload['name'] = $supercategory['name'];
+                $supercatPayload['description'] = $supercategory['description'];
+                //
+                $supercatPayload['supercatLandingHeaderText'] = $supercategory['landing_heading_guardian'];
+                $supercatPayload['supercatLandingDescriptorText'] = $supercategory['landing_descriptor'];
+                //
+                $supercatPayload['hint_text'] = $supercategory['search_hint'];
+                $supercatPayload['header_text_popular_all'] = $supercategory['search_heading_all'];
+                $supercatPayload['header_text_popular_cats'] = $supercategory['search_heading_cats'];
+                $supercatPayload['supercatMinSelections'] = $supercategory['min_selections_kid'];
+                $supercatPayload['supercatMaxSelections'] = $supercategory['max_selections_kid'];
+                //
+                //
+                //Get the popular activities for kids in this supercat
+                //
+                //
+                //##############
+                /*
+                if($supercategory['uuid'] ==  $this->occupationSupercategoryId){
+                    //Occupations and Careers
+                    $occupationsRepo
+
+                }
+                */
+                //##############
+                //
+                //
+                $popularActivitiesInSupercatPayload = array();
+                //
+                if($supercategory['uuid'] ==  $this->occupationSupercategoryId){
+                    //Occupations and Careers
+                    $popularActivitiesInSupercat = $occupationsRepo->getPopularKidOccupations();
+
+                    //
+                    if($popularActivitiesInSupercat != false){
+
+                        foreach($popularActivitiesInSupercat as $popularActivityInSupercat){
+
+                            $popularActivityInSupercatPayload = [];
+                            $popularActivityInSupercatPayload['uuid'] = $popularActivityInSupercat['onetsoc_code'];
+                            $popularActivityInSupercatPayload['name'] = $popularActivityInSupercat['title'];
+                            //
+                            $popularActivitiesInSupercatPayload[] = $popularActivityInSupercatPayload;
+                        }
+                    }
+                    //TODO: Ensure we replace a blank result with other stuff
+
+                }
+                else
+                {
+                    $popularActivitiesInSupercat = $onboardingOptionsRepo->getPopularKidActivityOptionsInSuperCategory($supercategory['uuid']);
+
+                    //
+                    if($popularActivitiesInSupercat != false){
+
+                        foreach($popularActivitiesInSupercat as $popularActivityInSupercat){
+
+                            $popularActivityInSupercatPayload = [];
+                            $popularActivityInSupercatPayload['uuid'] = $popularActivityInSupercat['uuid'];
+                            $popularActivityInSupercatPayload['name'] = $popularActivityInSupercat['name'];
+                            //
+                            $popularActivitiesInSupercatPayload[] = $popularActivityInSupercatPayload;
+                        }
+                    }
+                    //TODO: Ensure we replace a blank result with other stuff
+                }
+                //
+                //
+                //
+                //
+                $supercatPayload['popular_in_all'] =  $popularActivitiesInSupercatPayload;
+                //
+                //
+                //###############
+                //get the list of popular activities per category
+                $guardianPopularCategoriesPayload = array();
+                //
+                //
+                if($supercategory['uuid'] ==  $this->occupationSupercategoryId){
+                    //Occupations and Careers
+                    $guardianCategoriesInSupercat = $occupationsRepo->getKidOccupationCategories();
+                }
+                else
+                {
+                    $guardianCategoriesInSupercat = $onboardingOptionsRepo->getKidCategoriesInSupercategory($supercategory['uuid']);
+                }
+                //
+                
+                //
+                //
+                if($guardianCategoriesInSupercat != false){
+                    
+                    
+                    //
+                    //for each category in the group
+                    foreach($guardianCategoriesInSupercat as $guardianCategoryInSupercat){
+                        //
+                        //
+                        $guardianCategoriesInSupercatPayload = [];
+                        $guardianCategoriesInSupercatPayload['uuid'] = $guardianCategoryInSupercat['uuid'];
+                        $guardianCategoriesInSupercatPayload['name'] = $guardianCategoryInSupercat['name'];
+                        //
+                        //
+                        //
+                        //1: get popular activities in this category
+                            //$guardianCategoriesInSupercatPayload['popular_in_cat'];
+                            //TODO: remove those in the all group
+                        //
+                        $popularActivitiesInCatPayload = array();
+                        //
+                        if($supercategory['uuid'] ==  $this->occupationSupercategoryId){
+                            //Occupations and Careers
+                            $popularActivitiesInCat = $occupationsRepo->getPopularKidOccupationsInCategory($guardianCategoryInSupercat['uuid']);
+                            //
+                            if($popularActivitiesInCat != false){
+
+                            
+                                foreach($popularActivitiesInCat as $popularActivityInCat){
+                                    $popularActivityInCatPayload = [];
+                                    $popularActivityInCatPayload['uuid'] = $popularActivityInCat['onetsoc_code'];
+                                    $popularActivityInCatPayload['name'] = $popularActivityInCat['title'];
+                                    //
+                                    $popularActivitiesInCatPayload[] = $popularActivityInCatPayload;
+                                }
+                            }
+                            //
+                            
+                        }
+                        else
+                        {
+                            $popularActivitiesInCat = $onboardingOptionsRepo->getPopularKidActivityOptionsInCategory($guardianCategoryInSupercat['uuid']);
+                            //
+                            if($popularActivitiesInCat != false){
+
+                            
+                                foreach($popularActivitiesInCat as $popularActivityInCat){
+                                    $popularActivityInCatPayload = [];
+                                    $popularActivityInCatPayload['uuid'] = $popularActivityInCat['uuid'];
+                                    $popularActivityInCatPayload['name'] = $popularActivityInCat['name'];
+                                    //
+                                    $popularActivitiesInCatPayload[] = $popularActivityInCatPayload;
+                                }
+                            }
+                            //
+                        }
+                        
+                        
+                        //
+                        $guardianCategoriesInSupercatPayload['popular_in_cat'] = $popularActivitiesInCatPayload;
+
+                        //
+                        //
+                        //2: a: get list of subcat in this category
+                            //$guardianCategoriesInSupercatPayload['subcats'];
+                            //TODO: b: get popular in the subcat
+                        //
+                        //
+                        if($supercategory['uuid'] ==  $this->occupationSupercategoryId){
+                            //Occupations and Careers
+                            $popularActivitiesInSupercat = $occupationsRepo->getKidOccupationSubcategoriesInCategory($guardianCategoryInSupercat['uuid']);
+                        }
+                        else
+                        {
+                            $subcategoriesInCat = $onboardingOptionsRepo->getKidSubcategoriesInCategory($guardianCategoryInSupercat['uuid']);
+                        }
+                        $subcategoriesInCatPayload = array();
+                        //
+                        //
+                        if($subcategoriesInCat != false){
+
+                            foreach($subcategoriesInCat as $subcategoryInCat){
+                                $subcategoryInCatPayload = [];
+                                $subcategoryInCatPayload['uuid'] = $subcategoryInCat['uuid'];
+                                $subcategoryInCatPayload['name'] = $subcategoryInCat['name'];
+                                //
+                                $subcategoriesInCatPayload[] = $subcategoryInCatPayload;
+                            }
+
+                        }
+                        //
+                        //
+                        $guardianCategoriesInSupercatPayload['subcats'] = $subcategoriesInCatPayload;
+
+
+                        //
+                        $guardianPopularCategoriesPayload[] = $guardianCategoriesInSupercatPayload;
+                        
+                    }
+
+
+                }
+
+                //
+                //
+                $supercatPayload['popular_in_cats'] = $guardianPopularCategoriesPayload;
+                //
+                $searchDefaultsGuardianPayload[] = $supercatPayload;
+            }
+
+        }
+        //
+        //##########
         //######################################################################################
         //# Accessibility Needs
         //
@@ -510,25 +727,25 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
         $accessibilityRepo = new AccessibilityRepository($this->dbConnection);
         //
         
-        $accessibilitySupercatInfo = $accessibilityRepo->getAccessibilitySupercatInfo();
+        $accessibilitySupercatInfoKid = $accessibilityRepo->getKidAccessibilitySupercatInfo();
         //
-        if( $accessibilitySupercatInfo != false ){
+        if( $accessibilitySupercatInfoKid != false ){
             
-            //error_log('found $accessibilitySupercatInfo with name '.$accessibilitySupercatInfo['name']);
+            //################################
             //
-            $accessDefaultsKidPayload['uuid'] = $accessibilitySupercatInfo['uuid'];
-            $accessDefaultsKidPayload['name'] = $accessibilitySupercatInfo['name'];
-            $accessDefaultsKidPayload['description'] = $accessibilitySupercatInfo['description'];
+            $accessDefaultsKidPayload['uuid'] = $accessibilitySupercatInfoKid['uuid'];
+            $accessDefaultsKidPayload['name'] = $accessibilitySupercatInfoKid['name'];
+            $accessDefaultsKidPayload['description'] = $accessibilitySupercatInfoKid['description'];
             //
-            $accessDefaultsKidPayload['supercatLandingHeaderText'] = $accessibilitySupercatInfo['landing_heading'];
-            $accessDefaultsKidPayload['supercatLandingDescriptorText'] = $accessibilitySupercatInfo['landing_descriptor'];
+            $accessDefaultsKidPayload['supercatLandingHeaderText'] = $accessibilitySupercatInfoKid['landing_heading_kid'];
+            $accessDefaultsKidPayload['supercatLandingDescriptorText'] = $accessibilitySupercatInfoKid['landing_descriptor'];
             //
-            $accessDefaultsKidPayload['hint_text'] = $accessibilitySupercatInfo['search_hint'];
-            $accessDefaultsKidPayload['header_text_popular_all'] = $accessibilitySupercatInfo['search_heading_all'];
-            $accessDefaultsKidPayload['header_text_popular_cats'] = $accessibilitySupercatInfo['search_heading_cats'];
-            $accessDefaultsKidPayload['supercatMinSelections'] = $accessibilitySupercatInfo['min_selections_kid'];
-            $accessDefaultsKidPayload['supercatMaxSelections'] = $accessibilitySupercatInfo['max_selections_kid'];
-            //accessDefaultsKidPayload[''] = $accessibilitySupercatInfo[''];
+            $accessDefaultsKidPayload['hint_text'] = $accessibilitySupercatInfoKid['search_hint'];
+            $accessDefaultsKidPayload['header_text_popular_all'] = $accessibilitySupercatInfoKid['search_heading_all'];
+            $accessDefaultsKidPayload['header_text_popular_cats'] = $accessibilitySupercatInfoKid['search_heading_cats'];
+            $accessDefaultsKidPayload['supercatMinSelections'] = $accessibilitySupercatInfoKid['min_selections_kid'];
+            $accessDefaultsKidPayload['supercatMaxSelections'] = $accessibilitySupercatInfoKid['max_selections_kid'];
+            //accessDefaultsKidPayload[''] = $accessibilitySupercatInfoKid[''];
             //
             //
             //Add commons
@@ -603,14 +820,114 @@ class AuthorizationRepository implements  AuthorizationRepositoryInterface
 
             //$accessDefaultsKidPayload['access_needs_in_cats'] = $kidAccessCategoriesPayload;
             $accessDefaultsKidPayload['popular_in_cats'] = $kidAccessCategoriesPayload;
+            //
+            //################################
 
         }
 
+        $accessibilitySupercatInfoGuardian = $accessibilityRepo->getAccessibilitySupercatInfo();
+        if($accessibilitySupercatInfoGuardian != false ){
+            //$accessDefaultsGuardianPayload
+            //################################
+            //
+            $accessDefaultsGuardianPayload['uuid'] = $accessibilitySupercatInfoKid['uuid'];
+            $accessDefaultsGuardianPayload['name'] = $accessibilitySupercatInfoKid['name'];
+            $accessDefaultsGuardianPayload['description'] = $accessibilitySupercatInfoKid['description'];
+            //
+            $accessDefaultsGuardianPayload['supercatLandingHeaderText'] = $accessibilitySupercatInfoKid['landing_heading_guardian'];
+            $accessDefaultsGuardianPayload['supercatLandingDescriptorText'] = $accessibilitySupercatInfoKid['landing_descriptor'];
+            //
+            $accessDefaultsGuardianPayload['hint_text'] = $accessibilitySupercatInfoKid['search_hint'];
+            $accessDefaultsGuardianPayload['header_text_popular_all'] = $accessibilitySupercatInfoKid['search_heading_all'];
+            $accessDefaultsGuardianPayload['header_text_popular_cats'] = $accessibilitySupercatInfoKid['search_heading_cats'];
+            $accessDefaultsGuardianPayload['supercatMinSelections'] = $accessibilitySupercatInfoKid['min_selections_kid'];
+            $accessDefaultsGuardianPayload['supercatMaxSelections'] = $accessibilitySupercatInfoKid['max_selections_kid'];
+            //accessDefaultsGuardianPayload[''] = $accessibilitySupercatInfoKid[''];
+            //
+            //
+            //Add commons
+            $commonestNeeds = $accessibilityRepo->getKidCommonestAccessNeeds();
+            $commonestNeedsPayload = array();
+            //
+            if($commonestNeeds != false){
+                //
+                error_log('found $commonestNeeds');
+                //
+                foreach($commonestNeeds as $commonestNeed){
+                    //
+                    $commonestNeedPayload = [];
+                    //
+                    $commonestNeedPayload['uuid'] = $commonestNeed['uuid'];
+                    $commonestNeedPayload['name'] = $commonestNeed['name'];
+                    $commonestNeedPayload['description'] = $commonestNeed['description'];
+                    //$commonestNeedPayload[''] = $commonestNeed[''];
+                    //
+                    $commonestNeedsPayload[] = $commonestNeedPayload;
+                    //
+                }
+            }
+            //
+            $accessDefaultsGuardianPayload['popular_in_all'] = $commonestNeedsPayload;
+            //
+            //
+            //
+            $guardianAccessCategories = $accessibilityRepo->getAccessCategories();
+            //
+            $guardianAccessCategoriesPayload = array();
+            //
+            if($guardianAccessCategories != false){
+                //
+                //error_log('found $guardianAccessCategories');
+                foreach($guardianAccessCategories as $accessCategory){
+                    $accessCategoryPayload = [];
+                    $accessCategoryPayload['uuid'] = $accessCategory['description'];
+                    $accessCategoryPayload['name'] = $accessCategory['name'];
+                    $accessCategoryPayload['description'] = $accessCategory['description'];
+                    //
+                    $accessCategoryNeedsInCat = $accessibilityRepo->getAccessNeedsInCategory($accessCategoryPayload['uuid']);
+                    $accessCategoryNeedsInCatPayload = array();
+                    //
+                    if($accessCategoryNeedsInCat !=false){
+                        //
+                        error_log('found $GaccessCategoryNeedsInCat');
+
+                        foreach($accessCategoryNeedsInCat as $accessCategoryNeed){
+                            //
+                            $accessCategoryNeedPayload = [];
+                            //
+                            $accessCategoryNeedPayload['uuid'] = $accessCategoryNeed['uuid'];
+                            $accessCategoryNeedPayload['name'] = $accessCategoryNeed['name'];
+                            $accessCategoryNeedPayload['description'] = $accessCategoryNeed['description'];
+                            //
+                            $accessCategoryNeedsInCatPayload[] = $accessCategoryNeedPayload;
+                            //
+                        }
+                    }
+                    //
+                    //$accessCategoryPayload[''] = [];
+                    //$accessCategoryPayload['subcats'] = [''];
+
+                    //$accessCategoryPayload['access_needs_in_cat'] = $accessCategoryNeedsInCatPayload;
+                    $accessCategoryPayload['popular_in_cat'] = $accessCategoryNeedsInCatPayload;
+                    //
+                    //########
+                    $guardianAccessCategoriesPayload[] = $accessCategoryPayload;
+                }
+            }else{
+                error_log('No! found $guardianAccessCategories');
+            }
+
+            //$accessDefaultsGuardianPayload['access_needs_in_cats'] = $kidAccessCategoriesPayload;
+            $accessDefaultsGuardianPayload['popular_in_cats'] = $guardianAccessCategoriesPayload;
+            //
+            //################################
+
+        }
+        //
         //######################################################################################
         //
-        //$searchDefaultsKidPayload = $searchDefaultsGuardianPayload;
-        $searchDefaultsGuardianPayload = $searchDefaultsKidPayload;
-        $accessDefaultsGuardianPayload = $accessDefaultsKidPayload;
+        //$searchDefaultsGuardianPayload = $searchDefaultsKidPayload;
+        //$accessDefaultsGuardianPayload = $accessDefaultsKidPayload;
         //
         $responseMapData['searchDefaultsKid']['supercats'] = $searchDefaultsKidPayload;
         $responseMapData['searchDefaultsKid']['accesscat'] = $accessDefaultsKidPayload;

@@ -22,7 +22,7 @@ class AuthorizationMiddleware implements AuthorizationMiddlewareInterface
         if (!($request->hasHeader('X-CLIENT-NACHA-ID-TOKEN')&&$request->hasHeader('X-CLIENT-TYPE'))) {
             //BAD REQUEST
             $responseFactory = new \Nyholm\Psr7\Factory\Psr17Factory();
-            return $responseFactory->createResponse(403);
+            return $responseFactory->createResponse(400);
         }
 
         $response = $handler->handle($request);

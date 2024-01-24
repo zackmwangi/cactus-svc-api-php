@@ -6,6 +6,13 @@ namespace App\Middleware\Authorization;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
+use Kreait\Firebase\JWT\Error\IdTokenVerificationFailed;// as xIdTokenVerificationFailed;
+use Kreait\Firebase\JWT\IdTokenVerifier;// as xIdTokenVerifier;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;// as xFilesystemAdapter;
+//
+//use Firebase\JWT\JWT;
+use \stdClass;
+
 use App\Middleware\Authorization\OnboardingAuthMiddlewareInterface;
 
 class OnboardingAuthMiddleware implements OnboardingAuthMiddlewareInterface
@@ -19,22 +26,56 @@ class OnboardingAuthMiddleware implements OnboardingAuthMiddlewareInterface
 
     public function __invoke(Request $request, RequestHandler $handler)
     {
-        
-        $jwtToken = $request->getHeaderLine('X-CLIENT-JWT-TOKEN');
+        $responseFactory = new \Nyholm\Psr7\Factory\Psr17Factory();
+
+        if (!($request->hasHeader('X-CLIENT-REG-TOKEN') && $request->hasHeader('X-CLIENT-TYPE'))) {
+            //BAD REQUEST
+            error_log("bad request");
+            //
+            return $responseFactory->createResponse(400);
+        }
+
+        $jwtToken = $request->getHeaderLine('X-CLIENT-REG-TOKEN');
 
         if(strlen($jwtToken)<10){
 
             $responseString = "Resource requires authentication";
-
-            $responseFactory = new \Nyholm\Psr7\Factory\Psr17Factory();
             $response = $responseFactory->createResponse(401,$responseString);
             return $response->withStatus(401);
 
         }
-        
-        $response = $handler->handle($request);
-        return $response;
 
+        //validate
+        try{
+            //
+            //
+            $validatedUserIdTokepayload = $this->validateIdToken($jwtToken);
+            //
+            if($validatedUserIdTokepayload == false) {
+                $responseString = "Resource requires authentication";
+            $response = $responseFactory->createResponse(401,$responseString);
+            return $response->withStatus(401);
+
+            }
+            //else
+            //{
+                $response = $handler->handle($request);
+                return $response;
+            //}
+            //
+        } catch (\Exception $e) {
+
+            $responseString = "Resource requires authentication";
+            $response = $responseFactory->createResponse(401,$responseString);
+            //return $response->withStatus(401)->withJson(['error' => 'Unauthorized']);
+            return $response->withStatus(401);
+        }
+
+
+        
+
+        
+        
         //
         //X-CLIENT-TOKEN-VAL
         /*
@@ -61,5 +102,23 @@ class OnboardingAuthMiddleware implements OnboardingAuthMiddlewareInterface
         */
         //
         //
+    }
+
+    private function validateIdToken($idToken)
+    {
+        //echo "$idToken";
+        $cache = new FilesystemAdapter();
+        $verifier = IdTokenVerifier::createWithProjectIdAndCache($this->jwtSettings['jwtFirebaseProjectId'], $cache);
+        //$verifier = IdTokenVerifier::createWithProjectId($this->jwtSettings['jwtFirebaseProjectId']);
+        //
+        try {
+            $token = $verifier->verifyIdToken($idToken);
+            return $token->payload();
+        } catch (IdTokenVerificationFailed $e) {
+            //error_log($e->getMessage());
+            return false;
+        }
+
+        
     }
 }

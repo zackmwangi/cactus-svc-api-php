@@ -71,6 +71,9 @@ return function (App $app, Container $dependencyContainer) {
         //
         //
         $group->post('/activities/search/supercat/hobby', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatHobby']);
+        //
+        $group->post('/activityoptions', [$this->get(OnboardingControllerInterface::class),'getActivityOptions']);
+        /*
         $group->post('/activities/search/supercat/sport', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatSport']);
         $group->post('/activities/search/supercat/topic', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatTopic']);
         $group->post('/activities/search/supercat/career', [$this->get(OnboardingControllerInterface::class),'searchActivitiesInSupercatCareer']);
@@ -90,9 +93,11 @@ return function (App $app, Container $dependencyContainer) {
 
         //Gather feedback
         $group->post('/feedback', [$this->get(OnboardingControllerInterface::class),'gatherFlybyFeedback']);
+        */
 
         //Register new user
         $group->post('/register', [$this->get(OnboardingControllerInterface::class),'registerApplicant']);
+
 
     })->add($app->getContainer()->get(OnboardingAuthMiddlewareInterface::class));
     //

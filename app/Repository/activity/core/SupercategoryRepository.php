@@ -35,17 +35,17 @@ class SupercategoryRepository implements SupercategoryRepositoryInterface{
         $show_kid = 1;
 
         if($showKidSuitableOnly == 1){
-            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_a_supercategory_by_uuid WHERE visible = :visible AND show_kid = :show_kid LIMIT 5");
+            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_a_supercategory_by_uuid WHERE visible = :visible AND show_kid = 1 LIMIT 5");
         }
         else{
             //include adult stuff
-            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_a_supercategory_by_uuid WHERE visible = :visible LIMIT 5");
+            $stmt = $this->dbConnection->prepare("SELECT * FROM nacha_core_a_supercategory_by_uuid WHERE visible = :visible AND show_guardian = 1 LIMIT 5");
 
         }
 
         
         $stmt->bindParam(':visible', $visibleValue);
-        $stmt->bindParam(':show_kid',$show_kid);
+        #$stmt->bindParam(':show_kid',$show_kid);
         $stmt->execute();
         $data = $stmt->fetchAll();
         return $data;
