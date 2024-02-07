@@ -129,13 +129,12 @@ class AuthorizationController implements AuthorizationControllerInterface
         //
          $geolocation = $request->getAttribute('geolocation');
          //
-         if( ($geolocation!=null || $geolocation!=='') && 
-         ($geolocation->ip != '127.0.0.1') && 
-         ($geolocation->ip !='192.168.30.59') &&
-         ($geolocation->ip !='192.168.133.209') &&
-         ($geolocation->ip !='172.20.10.7') &&
-         ($geolocation->ip !='172.20.10.8') &&
-         ($geolocation->ip !='192.168.124.164') ){
+         if( 
+            ($geolocation!=null || $geolocation!=='') && 
+            ($geolocation->ip != '127.0.0.1') && 
+            !str_contains($geolocation->ip, '192.168.') &&
+            !str_contains($geolocation->ip, '172.20.10.') 
+         ){
              //if($geolocation->ip !='127.0.0.1'){
                  $geoInfoIpAddress = $geolocation->ip;
                  $geoInfoCountryCode = $geolocation->country;
